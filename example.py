@@ -4,8 +4,8 @@ from time import time
 from EventProcessing.event_frame import EventFrameConverter
 
 
-testing_file = r"E:\dataset\DailyDvs-200\test\011\C11P4M0S3_20231116_10_59_47.npz.npy"
-testing_output_dir = r"E:\dataset\DailyDvs-200\test\C11P4M0S3_20231116_10_59_47"
+testing_file = "E:/dataset/DailyDvs-200/test/DailyDvs-200/011/C11P4M0S3_20231116_10_59_47.npz.npy"
+testing_output_dir = "E:/dataset/DailyDvs-200/test/output/C11P4M0S3_20231116_10_59_47"
 
 
 def event_frame_example():

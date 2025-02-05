@@ -71,69 +71,9 @@ class EventFrameConverter(BaseEventImageConverter):
                 cv2.imwrite(save_path, event_image)
 
 
-import glob
-import re
-
-
-def process_my_data(interval):
-    return
-    converter = EventFrameConverter(interval=interval)
-    data_root = "/media/2TB_1/dataset/DailyDVS-200" if sys.platform == 'linux' else r"E:\dataset\DailyDvs-200"
-    out_root = "/media/2TB_1/Bacon/dataset/DailyDvs-200" if sys.platform == 'linux' else r"E:\dataset\DailyDvs-200"
-    file_list = glob.glob(fr"{data_root}/DailyDvs-200/*/*.aedat4")
-
-    train_txt = rf"{data_root}/description/train.txt"
-    val_txt = rf"{data_root}/description/val.txt"
-    test_txt = rf"{data_root}/description/test.txt"
-    with open(train_txt) as f:
-        raw_train_file_list = f.readlines()
-    with open(val_txt) as f:
-        raw_val_file_list = f.readlines()
-    with open(test_txt) as f:
-        raw_test_file_list = f.readlines()
-
-    train_file_dict = {re.search(r'/(.*?\.aedat4)', item).group(1): int(item.split(' ')[1]) for item in
-                       raw_train_file_list}  # {'C47P48M1S2_20231203_19_44_04': label_id}
-    val_file_dict = {re.search(r'/(.*?\.aedat4)', item).group(1): int(item.split(' ')[1]) for item in raw_val_file_list}
-    test_file_dict = {re.search(r'/(.*?\.aedat4)', item).group(1): int(item.split(' ')[1]) for item in
-                      raw_test_file_list}
-
-    output_file_list = []
-    for item in file_list:
-        # 取得item的檔案名稱
-        file_name = item.split(os.sep)[-1]
-        if file_name in train_file_dict:
-            is_which = "train"
-            label = train_file_dict[file_name]
-        elif file_name in val_file_dict:
-            is_which = "val"
-            label = val_file_dict[file_name]
-        elif file_name in test_file_dict:
-            is_which = "test"
-            label = test_file_dict[file_name]
-        else:
-            raise ValueError
-        output_file_list.append(
-            rf"{out_root}/event_count_interval_{interval}/{is_which}/{label}/{file_name.replace('.aedat4', '')}")
-
-    print(output_file_list[0])
-
-    for in_path, out_path in tqdm(zip(file_list, output_file_list), total=len(file_list)):
-        converter.events_to_event_images(input_filepath=in_path, output_file_dir=out_path)
-
-
-# def one_data():
-#     converter = EventImageConvert(width=346, height=260, interval=0.5)
-#     in_path = r"E:\dataset\SeAct\m6-yexin\0006-2023_10_29_15_59_11.aedat4"
-#     out_path = rf"E:\dataset\SeAct_m\m6-yexin\intervel_{converter.interval}"
-#     converter._events_to_event_images(input_filename=in_path, output_file=out_path)
-
-
 if __name__ == '__main__':
-    # one_data()
-    # process_my_data(interval=0.125)
-    # process_my_data(interval=0.25)
     converter = EventFrameConverter(interval=0.5)
     in_path = r"E:\dataset\DailyDvs-200\test\011\C11P4M0S3_20231116_10_59_47.npz.npy"
     output_path = r"E:\dataset\DailyDvs-200\test\011\C11P4M0S3_20231116_10_59_47.npz.npy"
+    converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
 
