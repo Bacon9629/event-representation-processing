@@ -1,0 +1,32 @@
+import os
+import shutil
+from time import time
+from EventProcessing.event_frame import EventFrameConverter
+
+
+testing_file = r"E:\dataset\DailyDvs-200\test\011\C11P4M0S3_20231116_10_59_47.npz.npy"
+testing_output_dir = r"E:\dataset\DailyDvs-200\test\C11P4M0S3_20231116_10_59_47"
+
+
+def event_frame_example():
+    converter = EventFrameConverter(interval=0.5)
+
+    in_path = testing_file
+    output_path = testing_output_dir
+
+    converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
+
+
+if __name__ == '__main__':
+    if os.path.exists(testing_output_dir):
+        print("Remove output dir")
+        shutil.rmtree(testing_output_dir)
+
+    start_time = time()
+
+    event_frame_example()
+
+    end_time = time()
+
+    print(f"cost time: %.3f s" % (end_time - start_time))
+    print("finish")
