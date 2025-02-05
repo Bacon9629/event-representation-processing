@@ -8,6 +8,7 @@ from EventProcessing.BaseEventImageConverter import BaseEventImageConverter
 from EventProcessing import EventFrameConverter
 from EventProcessing import EventCountConverter
 from EventProcessing import EventTimeSurfaceConverter
+from EventProcessing import EventSpeedInvariantTimeSurfaceConverter
 
 
 def load_file_descriptions(data_root):
@@ -88,8 +89,10 @@ def process_dataset(converter: BaseEventImageConverter, file_extension, interval
 if __name__ == '__main__':
     # converter = EventFrameConverter(interval=0.5)
     # converter = EventCountConverter(interval=0.5)
-    converter = EventTimeSurfaceConverter(interval=0.5)
+    # converter = EventTimeSurfaceConverter(interval=0.5)
+    converter = EventSpeedInvariantTimeSurfaceConverter(interval=0.5)
 
+    print(f"Using {converter.__class__.__name__}")
     process_dataset(converter=converter, file_extension='aedat4', interval=0.5, num_workers=cpu_count()//2)
     # process_data(converter=converter, file_extension='aedat4', interval=0.25)
     # process_data(converter=converter, file_extension='aedat4', interval=0.125)
