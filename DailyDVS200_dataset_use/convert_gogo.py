@@ -61,11 +61,15 @@ def process_data(converter: BaseEventImageConverter, file_extension, interval):
 
 
 if __name__ == '__main__':
+    import os
+    import sys
+    sys.path.append(os.getcwd())
+
     converter = EventFrameConverter(interval=0.5)
 
-    process_data(converter=converter, file_extension='npy', interval=0.5)
-    process_data(converter=converter, file_extension='npy', interval=0.25)
-    process_data(converter=converter, file_extension='npy', interval=0.125)
+    process_data(converter=converter, file_extension='aedat4', interval=0.5)
+    process_data(converter=converter, file_extension='aedat4', interval=0.25)
+    process_data(converter=converter, file_extension='aedat4', interval=0.125)
 
-    # process_data(converter=converter, file_extension='aedat4', interval=0.5)
+    # process_data(converter=converter, file_extension='npy', interval=0.5)
 
