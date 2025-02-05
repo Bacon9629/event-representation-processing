@@ -1,5 +1,6 @@
 import os
 import sys
+from copy import copy
 
 import dv_processing as dv_p
 import numpy as np
@@ -36,7 +37,8 @@ class EventTimeSurfaceConverter(BaseEventImageConverter):
                 continue
 
             accumulator.accept(store)
-            result_frames.append(accumulator.generateFrame().image)
+            result_frames.append(copy(accumulator.generateFrame().image))
+            accumulator.reset()
             store = dv_p.EventStore()
 
             # # Show the accumulated image
