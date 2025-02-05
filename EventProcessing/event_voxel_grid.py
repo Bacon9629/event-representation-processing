@@ -196,7 +196,7 @@ class EventVoxelGridConverter(BaseEventImageConverter):
         y = torch.tensor(events['y'])
         pol = torch.tensor(events['polarity'])
         voxel_grid = self.events_to_voxel(xs=x, ys=y, ts=ts, ps=pol, B=10, sensor_size=(self.H, self.W), temporal_bilinear=True)
-        print(voxel_grid.shape)  # (10, 240, 320)
+        # print(voxel_grid.shape)  # (10, 240, 320)
 
         # save
         for index, frame in enumerate(voxel_grid):

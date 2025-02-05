@@ -53,6 +53,8 @@ def process_dataset(converter: BaseEventImageConverter, file_extension, interval
     """
     Generalized function to process .npy or .aedat4 files using parallel processing.
     """
+    print(f"Using {converter.__class__.__name__}")
+
     data_root = "/media/2TB_1/dataset/DailyDVS-200" if sys.platform == 'linux' else r"E:/dataset/DailyDvs-200"
     out_root = "/media/2TB_1/Bacon/dataset/DailyDvs-200" if sys.platform == 'linux' else r"E:/dataset/DailyDvs-200"
 
@@ -98,7 +100,6 @@ if __name__ == '__main__':
     converter = EventVoxelGridConverter(interval=0.5, voxel_bin_num=9)
     # converter = EventGTEConverter(interval=0.5, patch_size=(4, 4), group_num=12)
 
-    print(f"Using {converter.__class__.__name__}")
     process_dataset(converter=converter, file_extension='aedat4', interval=0.5, num_workers=cpu_count()//2)
     # process_data(converter=converter, file_extension='aedat4', interval=0.25)
     # process_data(converter=converter, file_extension='aedat4', interval=0.125)
