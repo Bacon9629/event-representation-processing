@@ -7,6 +7,7 @@ from multiprocessing import Pool, cpu_count
 from EventProcessing.BaseEventImageConverter import BaseEventImageConverter
 from EventProcessing import EventFrameConverter
 from EventProcessing import EventCountConverter
+from EventProcessing import EventTimeSurfaceConverter
 
 
 def load_file_descriptions(data_root):
@@ -86,7 +87,8 @@ def process_dataset(converter: BaseEventImageConverter, file_extension, interval
 
 if __name__ == '__main__':
     # converter = EventFrameConverter(interval=0.5)
-    converter = EventCountConverter(interval=0.5)
+    # converter = EventCountConverter(interval=0.5)
+    converter = EventTimeSurfaceConverter(interval=0.5)
 
     process_dataset(converter=converter, file_extension='aedat4', interval=0.5, num_workers=cpu_count()//2)
     # process_data(converter=converter, file_extension='aedat4', interval=0.25)
