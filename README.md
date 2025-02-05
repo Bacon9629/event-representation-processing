@@ -26,5 +26,7 @@ Code for various methods to convert event-based camera data into RGB-like repres
 
 ### Voxel Grid
 
-
 ### Group Token Embedding (GTE)
+| https://github.com/Peterande/GET-Group-Event-Transformer/blob/master/event_based/voxel_grid.py
+* 只有他輸出的是npy
+* npy shape: `[channel, H // patch_size, W // patch_size]`
