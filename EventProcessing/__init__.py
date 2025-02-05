@@ -4,3 +4,4 @@ from .event_time_surface import EventTimeSurfaceConverter
 from .event_speed_invariant_time_surface import EventSpeedInvariantTimeSurfaceConverter
 from .event_AFE import EventAFEConverter
 from .event_GTE import EventGTEConverter
+from .event_voxel_grid import EventVoxelGridConverter

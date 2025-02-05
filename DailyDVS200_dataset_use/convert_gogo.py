@@ -10,6 +10,7 @@ from EventProcessing import EventCountConverter
 from EventProcessing import EventTimeSurfaceConverter
 from EventProcessing import EventSpeedInvariantTimeSurfaceConverter
 from EventProcessing import EventAFEConverter
+from EventProcessing import EventVoxelGridConverter
 from EventProcessing import EventGTEConverter
 
 
@@ -94,7 +95,8 @@ if __name__ == '__main__':
     # converter = EventTimeSurfaceConverter(interval=0.5)
     # converter = EventSpeedInvariantTimeSurfaceConverter(interval=0.5)
     # converter = EventAFEConverter(interval=0.5, sample_event_threshold=40, sample_event_num_min=100000)
-    converter = EventGTEConverter(interval=0.5, patch_size=(4, 4), group_num=12)
+    converter = EventVoxelGridConverter(interval=0.5, voxel_bin_num=9)
+    # converter = EventGTEConverter(interval=0.5, patch_size=(4, 4), group_num=12)
 
     print(f"Using {converter.__class__.__name__}")
     process_dataset(converter=converter, file_extension='aedat4', interval=0.5, num_workers=cpu_count()//2)

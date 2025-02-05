@@ -25,6 +25,8 @@ Code for various methods to convert event-based camera data into RGB-like repres
 
 
 ### Voxel Grid
+* Hyperparameter from Source paper: Unsupervised Event-based Learning of Optical Flow, Depth, and Egomotion
+* Code from https://github.com/Peterande/GET-Group-Event-Transformer/blob/master/event_based/voxel_grid.py 
 
 ### Group Token Embedding (GTE)
 | https://github.com/Peterande/GET-Group-Event-Transformer/blob/master/event_based/voxel_grid.py
