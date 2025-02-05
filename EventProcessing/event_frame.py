@@ -43,6 +43,8 @@ class EventFrameConverter(BaseEventImageConverter):
         return img
 
     def events_to_event_images(self, input_filepath: str, output_file_dir: str):
+        if not os.path.exists(input_filepath):
+            raise FileNotFoundError("File not found: {}".format(input_filepath))
 
         if input_filepath.endswith('.aedat4'):
             events = self.aedat_reader(input_filepath)
@@ -55,20 +57,19 @@ class EventFrameConverter(BaseEventImageConverter):
         interval = self.interval
 
         os.makedirs(output_file_dir, exist_ok=True)
-        if os.path.exists(input_filepath):
-            start_timestamp = events[0][0]
+        start_timestamp = events[0][0]
 
-            # saving event images.
-            for i in range(int(aps_frames_NUM)):
-                start_index = np.searchsorted(events['timestamp'], int(start_timestamp) + i * interval * 1e6)
-                end_index = np.searchsorted(events['timestamp'], int(start_timestamp) + (i + 1) * interval * 1e6)
+        # saving event images.
+        for i in range(int(aps_frames_NUM)):
+            start_index = np.searchsorted(events['timestamp'], int(start_timestamp) + i * interval * 1e6)
+            end_index = np.searchsorted(events['timestamp'], int(start_timestamp) + (i + 1) * interval * 1e6)
 
-                rec_events = events[start_index:end_index]
+            rec_events = events[start_index:end_index]
 
-                event_image = self._make_color_histo(rec_events)
-                save_path = output_file_dir + '/{:08d}.png'.format(i)
+            event_image = self._make_color_histo(rec_events)
+            save_path = output_file_dir + '/{:08d}.png'.format(i)
 
-                cv2.imwrite(save_path, event_image)
+            cv2.imwrite(save_path, event_image)
 
 
 if __name__ == '__main__':
