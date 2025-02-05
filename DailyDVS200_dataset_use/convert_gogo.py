@@ -4,7 +4,8 @@ import re
 import sys
 from tqdm import tqdm
 from EventProcessing.BaseEventImageConverter import BaseEventImageConverter
-from EventProcessing.event_frame import EventFrameConverter
+from EventProcessing import EventFrameConverter
+from EventProcessing import EventCountConverter
 
 
 def load_file_descriptions(data_root):
@@ -49,15 +50,15 @@ def process_data(converter: BaseEventImageConverter, file_extension, interval):
                 found_in_split = True
                 label = file_dicts[split][file_name]
                 output_file_list.append(
-                    rf"{out_root}/event_count_interval_{interval}/{split}/{label}/{file_name}"
+                    rf"{out_root}/{converter.__class__.__name__}_interval_{interval}/{split}/{label}/{file_name}"
                 )
 
         if not found_in_split:
             raise ValueError(f"{file_name} not found in description train/val/test")
 
     for in_path, out_path in tqdm(zip(file_list, output_file_list), total=len(file_list)):
-        if not os.path.exists(out_path):
-            converter.events_to_event_images(input_filepath=in_path, output_file_dir=out_path)
+        # if not os.path.exists(out_path):
+        converter.events_to_event_images(input_filepath=in_path, output_file_dir=out_path)
 
 
 if __name__ == '__main__':
@@ -65,11 +66,12 @@ if __name__ == '__main__':
     import sys
     sys.path.append(os.getcwd())
 
-    converter = EventFrameConverter(interval=0.5)
+    # converter = EventFrameConverter(interval=0.5)
+    converter = EventCountConverter(interval=0.5)
 
     process_data(converter=converter, file_extension='aedat4', interval=0.5)
-    process_data(converter=converter, file_extension='aedat4', interval=0.25)
-    process_data(converter=converter, file_extension='aedat4', interval=0.125)
+    # process_data(converter=converter, file_extension='aedat4', interval=0.25)
+    # process_data(converter=converter, file_extension='aedat4', interval=0.125)
 
     # process_data(converter=converter, file_extension='npy', interval=0.5)
 
