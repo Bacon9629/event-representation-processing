@@ -9,6 +9,7 @@ from EventProcessing import EventFrameConverter
 from EventProcessing import EventCountConverter
 from EventProcessing import EventTimeSurfaceConverter
 from EventProcessing import EventSpeedInvariantTimeSurfaceConverter
+from EventProcessing import EventAFEConverter
 
 
 def load_file_descriptions(data_root):
@@ -90,7 +91,8 @@ if __name__ == '__main__':
     # converter = EventFrameConverter(interval=0.5)
     # converter = EventCountConverter(interval=0.5)
     # converter = EventTimeSurfaceConverter(interval=0.5)
-    converter = EventSpeedInvariantTimeSurfaceConverter(interval=0.5)
+    # converter = EventSpeedInvariantTimeSurfaceConverter(interval=0.5)
+    converter = EventAFEConverter(interval=0.5, sample_event_threshold=40, sample_event_num_min=100000)
 
     print(f"Using {converter.__class__.__name__}")
     process_dataset(converter=converter, file_extension='aedat4', interval=0.5, num_workers=cpu_count()//2)

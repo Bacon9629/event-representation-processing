@@ -5,6 +5,7 @@ from EventProcessing import EventFrameConverter
 from EventProcessing import EventCountConverter
 from EventProcessing import EventTimeSurfaceConverter
 from EventProcessing import EventSpeedInvariantTimeSurfaceConverter
+from EventProcessing import EventAFEConverter
 
 
 testing_file = "E:/dataset/DailyDvs-200/test/DailyDvs-200/011/C11P4M0S3_20231116_10_59_47.npz.npy"
@@ -47,6 +48,15 @@ def event_speed_invariant_time_surface_example():
     converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
 
 
+def event_AFE_example():
+    converter = EventAFEConverter(interval=0.5)
+
+    in_path = testing_file
+    output_path = testing_output_dir
+
+    converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
+
+
 if __name__ == '__main__':
     if os.path.exists(testing_output_dir):
         print("Remove output dir")
@@ -56,8 +66,9 @@ if __name__ == '__main__':
 
     # event_frame_example()
     # event_count_example()
-    event_time_surface_example()
+    # event_time_surface_example()
     # event_speed_invariant_time_surface_example()
+    event_AFE_example()
 
     end_time = time()
 
