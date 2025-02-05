@@ -6,7 +6,8 @@ Code for various methods to convert event-based camera data into RGB-like repres
 ### Event Frame
 
 
-### Event Counting (Event Histogram, Event Count Histogram) 
+### Event Count (Event Histogram, Event Count Histogram)
+| src: https://dv-processing.inivation.com/rel_1_7/accumulators.html
 
 
 ### Time Surface

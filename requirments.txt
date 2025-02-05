@@ -4,3 +4,4 @@ tqdm
 dv
 opencv-python
 matplotlib
+dv_processing
