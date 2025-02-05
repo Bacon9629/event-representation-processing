@@ -3,6 +3,7 @@ import glob
 import re
 import sys
 from tqdm import tqdm
+from multiprocessing import Pool, cpu_count
 from EventProcessing.BaseEventImageConverter import BaseEventImageConverter
 from EventProcessing import EventFrameConverter
 from EventProcessing import EventCountConverter
@@ -29,9 +30,23 @@ def load_file_descriptions(data_root):
     return file_dicts
 
 
-def process_data(converter: BaseEventImageConverter, file_extension, interval):
+def __process_one_data(args):
     """
-    Generalized function to process .npy or .aedat4 files.
+    Process a single file.
+    :param args: Tuple containing (converter, input_filepath, output_file_dir).
+    """
+    converter, in_path, out_path = args
+    try:
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        if not os.path.exists(out_path):
+            converter.events_to_event_images(input_filepath=in_path, output_file_dir=out_path)
+    except Exception as e:
+        print(f"Error processing {in_path}: {e}")
+
+
+def process_dataset(converter: BaseEventImageConverter, file_extension, interval, num_workers=None):
+    """
+    Generalized function to process .npy or .aedat4 files using parallel processing.
     """
     data_root = "/media/2TB_1/dataset/DailyDVS-200" if sys.platform == 'linux' else r"E:/dataset/DailyDvs-200"
     out_root = "/media/2TB_1/Bacon/dataset/DailyDvs-200" if sys.platform == 'linux' else r"E:/dataset/DailyDvs-200"
@@ -56,22 +71,25 @@ def process_data(converter: BaseEventImageConverter, file_extension, interval):
         if not found_in_split:
             raise ValueError(f"{file_name} not found in description train/val/test")
 
-    for in_path, out_path in tqdm(zip(file_list, output_file_list), total=len(file_list)):
-        # if not os.path.exists(out_path):
-        converter.events_to_event_images(input_filepath=in_path, output_file_dir=out_path)
+    tasks = [(converter, in_path, out_path) for in_path, out_path in zip(file_list, output_file_list)]
+
+    if num_workers is None:
+        num_workers = 0
+
+    if num_workers == 0:
+        for task in tqdm(tasks):
+            __process_one_data(task)
+    else:
+        with Pool(processes=num_workers) as pool:
+            list(tqdm(pool.imap_unordered(__process_one_data, tasks), total=len(tasks)))
 
 
 if __name__ == '__main__':
-    import os
-    import sys
-    sys.path.append(os.getcwd())
-
     # converter = EventFrameConverter(interval=0.5)
     converter = EventCountConverter(interval=0.5)
 
-    process_data(converter=converter, file_extension='aedat4', interval=0.5)
+    process_dataset(converter=converter, file_extension='aedat4', interval=0.5, num_workers=cpu_count()//2)
     # process_data(converter=converter, file_extension='aedat4', interval=0.25)
     # process_data(converter=converter, file_extension='aedat4', interval=0.125)
 
     # process_data(converter=converter, file_extension='npy', interval=0.5)
-
