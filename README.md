@@ -12,9 +12,9 @@
 * 這裡順便附上dataset DailyDVS200 轉換用的腳本 -> [DailyDVS200_dataset_use](DailyDVS200_dataset_use)
 ---
 
-## 使用方法
+## 👀 How to use? 
 
-* Python environment settings:
+#### Python environment settings:
 
 ```shell
 conda create -n event_representation python=3.10
@@ -22,7 +22,7 @@ conda activate event_representation
 pip install -r requirments.txt
 ```
 
-* How to run the code?
+#### How to run the code?
 
 ```python
 from EventProcessing import EventFrameConverter
@@ -43,7 +43,7 @@ converter = EventFrameConverter(width=320, height=240, interval=0.5)
 converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
 ```
 
-## Current representation
+## 👀 Current representation
 
 ### Event Frame
 
