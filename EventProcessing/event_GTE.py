@@ -32,10 +32,56 @@ class EventGTEConverter(BaseEventImageConverter):
         # GTE Hyperparameter define END
 
     @staticmethod
+    def index_mapping(sample, bins=None):
+        """
+        Multi-index mapping method from N-D to 1-D.
+        """
+        device = sample.device
+        bins = torch.as_tensor(bins).to(device)
+        y = torch.max(sample, torch.zeros([], device=device, dtype=torch.int32))
+        y = torch.min(y, bins.reshape(-1, 1))
+        index = torch.ones_like(bins)
+        index[1:] = torch.cumprod(torch.flip(bins[1:], [0]), -1).int()
+        index = torch.flip(index, [0])
+        l = torch.sum((index.reshape(-1, 1)) * y, 0)
+        return l, index
+    @staticmethod
     def get_repr(l, index, bins=None, weights=None):
         """
         Function to return histograms.
         """
+        """Warning: Something wrong here, but I don't know why. Parameter 'l' contain error items, the error item's 
+        value over then (index[0] * bins[0]) So I first exclude it and set its weight to '0' In other words, 
+        I will not participate in the voxel calculation, but this method will cause some deviations in the event data 
+        produced (the impact is very small)
+        
+        Example data: DailyDVS200 dataset - C11P4M0S3_20231116_10_59_47.aedat outlier data
+        Here is the outlier index
+        ```
+        outlier index = torch.argwhere(l >= index[0] * bins[0])
+        tensor([[62782],
+                [62898],
+                [65393],
+                [65964],
+                [66397],
+                [69335],
+                [70118],
+                [70702]])
+                
+        outlier event = x[62782], x[62898], x[65393], x[65964], x[66397], x[69335], x[70118], x[70702],
+        (tensor([1700103589086128, 4, 204, 1]), tensor([1700103589090617, 4, 204, 1]),
+         tensor([1700103589194834, 4, 204, 1]), tensor([1700103589220010, 4, 204, 1]),
+         tensor([1700103589239136, 4, 204, 1]), tensor([1700103589384142, 4, 204, 1]),
+         tensor([1700103589426688, 4, 204, 1]), tensor([1700103589456353, 4, 204, 1]))
+        ```
+        """
+
+        outlier_mask: torch.Tensor = l >= index[0] * bins[0]
+        l[outlier_mask] = index[0] * bins[0] - 1
+        for i in range(len(weights)):
+            weights[i][outlier_mask] = 0
+        print("outlier count: ", torch.argwhere(outlier_mask).shape)
+
         hist = torch.bincount(l, minlength=index[0] * bins[0], weights=weights[0])
         hist = hist.reshape(tuple(bins))
         if len(weights) > 1:
@@ -54,21 +100,6 @@ class EventGTEConverter(BaseEventImageConverter):
         else:
             return hist, hist2, hist3
         return hist, hist2, hist3, hist4
-
-    @staticmethod
-    def index_mapping(sample, bins=None):
-        """
-        Multi-index mapping method from N-D to 1-D.
-        """
-        device = sample.device
-        bins = torch.as_tensor(bins).to(device)
-        y = torch.max(sample, torch.zeros([], device=device, dtype=torch.int32))
-        y = torch.min(y, bins.reshape(-1, 1))
-        index = torch.ones_like(bins)
-        index[1:] = torch.cumprod(torch.flip(bins[1:], [0]), -1).int()
-        index = torch.flip(index, [0])
-        l = torch.sum((index.reshape(-1, 1)) * y, 0)
-        return l, index
 
     def forward(self, x) -> torch.Tensor:
         """
@@ -119,12 +150,12 @@ class EventGTEConverter(BaseEventImageConverter):
         else:
             raise NotImplementedError("File type not supported.")
 
-        ts = events['timestamp'].tolist()
+        ts = (events['timestamp'] - events['timestamp'][0]).tolist()
         x = events['x'].tolist()
         y = events['y'].tolist()
         pol = events['polarity'].tolist()
         events = np.array([ts, x, y, pol]).transpose()
-        events = torch.tensor(events, dtype=torch.int64)
+        events = torch.tensor(events)
 
         result = self.forward(events)[0]  # [channel, H // patch_size, W // patch_size]
 
