@@ -32,3 +32,6 @@ Code for various methods to convert event-based camera data into RGB-like repres
 | https://github.com/Peterande/GET-Group-Event-Transformer/blob/master/event_based/voxel_grid.py
 * 只有他輸出的是npy
 * npy shape: `[channel, H // patch_size, W // patch_size]`
+* 在原始repo內，他有對event stream進行augmentation，但因為以下原因，本repo沒這麼做
+  * 可比性: 使所有representation擁有同一個training dataset條件，降低實驗誤差
+  * 效率: 若使用作者提供的augmentation，資料集無法預先處理，這樣就必須在training過程中花時間處理
