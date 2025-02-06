@@ -147,7 +147,7 @@ class EventGTEConverter(BaseEventImageConverter):
             # 計算每一個event會被對應到patch內的哪個position，一樣是把result matrix轉成1-D後的位置，到後面就可以直接reshape成2-D
             # Warning!!!, 原始論文在(self.W / PW)加上1e-4的話會造成bug，刪掉他就沒事了
             Token = torch.floor(x[:, 1] % (self.W / PW)) + \
-                    torch.floor(x[:, 2] % (self.H / PH + b)) * int((self.W + 1) / PW)
+                    torch.floor(x[:, 2] % (self.H / PH)) * int((self.W + 1) / PW)
             # print(Token, Token.size)
             t_double = x[:, 0].double()
             # 計算每一個event應該要對應到哪一個時間分區，利用每一個event自己的時間scale到對應的時間分區
