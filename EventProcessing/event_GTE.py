@@ -70,9 +70,10 @@ class EventGTEConverter(BaseEventImageConverter):
         l = torch.sum((index.reshape(-1, 1)) * y, 0)
         return l, index
 
-    def forward(self, x) -> torch.Tensor:  # Input: x → [N, 4] tensor, each row is (t, x, y, p).
+    def forward(self, x) -> torch.Tensor:
         """
         Given a set of events, return event tokens.
+        @param x → [N, 4] tensor, each row is (t, x, y, p).
         """
         x = x[x != torch.inf].reshape(-1, 4)  # remove padding
         PH, PW = int((self.H + 1) / self.patch_size[0]), int((self.W + 1) / self.patch_size[1])
@@ -123,7 +124,7 @@ class EventGTEConverter(BaseEventImageConverter):
         y = events['y'].tolist()
         pol = events['polarity'].tolist()
         events = np.array([ts, x, y, pol]).transpose()
-        events = torch.tensor(events, dtype=torch.float32)
+        events = torch.tensor(events, dtype=torch.int64)
 
         result = self.forward(events)[0]  # [channel, H // patch_size, W // patch_size]
 

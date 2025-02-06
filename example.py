@@ -89,8 +89,8 @@ if __name__ == '__main__':
     # event_time_surface_example()
     # event_speed_invariant_time_surface_example()
     # event_AFE_example()
-    event_voxel_grid_example()
-    # event_GTE_example()
+    # event_voxel_grid_example()
+    event_GTE_example()
 
     end_time = time()
 
