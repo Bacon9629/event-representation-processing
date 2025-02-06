@@ -10,7 +10,7 @@ from EventProcessing import EventGTEConverter
 from EventProcessing import EventVoxelGridConverter
 
 
-testing_file = "E:/dataset/DailyDvs-200/test/DailyDvs-200/011/C11P45M1S5_20231202_20_05_52.npz.npy"
+testing_file = "E:/dataset/DailyDvs-200/test/DailyDvs-200/011/C11P4M0S3_20231116_10_59_47.npz.npy"
 testing_output_dir = "E:/dataset/DailyDvs-200/test/output/C11P4M0S3_20231116_10_59_47"
 
 

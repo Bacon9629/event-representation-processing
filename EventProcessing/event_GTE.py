@@ -1,5 +1,4 @@
 import os
-import random
 from typing import Tuple
 
 import numpy as np
@@ -209,8 +208,8 @@ class EventGTEConverter(BaseEventImageConverter):
             raise NotImplementedError("File type not supported.")
 
         if len(events['timestamp']) > self.max_point:
-            bias = random.randint(0, len(events['timestamp']) - self.max_point)
-            # events[bias:bias+self.max_point]
+            # 把bias的中間設定在events的中間
+            bias = int((len(events['timestamp']) - self.max_point) / 2)
             t = torch.tensor(events['timestamp'][bias:bias + self.max_point]).unsqueeze(1)
             x = torch.tensor(events['x'][bias:bias + self.max_point]).unsqueeze(1)
             y = torch.tensor(events['y'][bias:bias + self.max_point]).unsqueeze(1)
