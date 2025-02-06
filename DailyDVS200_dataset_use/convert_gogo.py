@@ -49,7 +49,7 @@ def __process_one_data(args):
         print(f"Error processing {in_path}: {e}")
 
 
-def process_dataset(converter: BaseEventImageConverter, file_extension, interval, num_workers=None):
+def process_dataset(converter: BaseEventImageConverter, file_extension, num_workers=None):
     """
     Generalized function to process .npy or .aedat4 files using parallel processing.
     """
@@ -72,7 +72,7 @@ def process_dataset(converter: BaseEventImageConverter, file_extension, interval
                 found_in_split = True
                 label = file_dicts[split][file_name]
                 output_file_list.append(
-                    rf"{out_root}/{converter.__class__.__name__}_interval_{interval}/{split}/{label}/{file_name}"
+                    rf"{out_root}/{converter.__class__.__name__}_interval_{converter.interval}/{split}/{label}/{file_name}"
                 )
 
         if not found_in_split:
@@ -97,11 +97,7 @@ if __name__ == '__main__':
     # converter = EventTimeSurfaceConverter(interval=0.5)
     # converter = EventSpeedInvariantTimeSurfaceConverter(interval=0.5)
     # converter = EventAFEConverter(interval=0.5, sample_event_threshold=40, sample_event_num_min=100000)
-    converter = EventVoxelGridConverter(interval=0.5, voxel_bin_num=9)
+    # converter = EventVoxelGridConverter(interval=0.5, voxel_bin_num=9)
     # converter = EventGTEConverter(interval=0.5, patch_size=(4, 4), group_num=12)
 
-    process_dataset(converter=converter, file_extension='aedat4', interval=0.5, num_workers=cpu_count()//2)
-    # process_data(converter=converter, file_extension='aedat4', interval=0.25)
-    # process_data(converter=converter, file_extension='aedat4', interval=0.125)
-
-    # process_data(converter=converter, file_extension='npy', interval=0.5)
+    process_dataset(converter=EventVoxelGridConverter(interval=0.5, voxel_bin_num=9), file_extension='aedat4', num_workers=cpu_count()//4)
