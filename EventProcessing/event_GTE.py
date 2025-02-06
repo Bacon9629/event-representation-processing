@@ -145,7 +145,8 @@ class EventGTEConverter(BaseEventImageConverter):
             Position = torch.div(x[:, 1], (self.W / PW + b), rounding_mode='floor') + \
                        torch.div(x[:, 2], (self.H / PH + b), rounding_mode='floor') * PW
             # 計算每一個event會被對應到patch內的哪個position，一樣是把result matrix轉成1-D後的位置，到後面就可以直接reshape成2-D
-            Token = torch.floor(x[:, 1] % (self.W / PW + 1e-4)) + \
+            # Warning!!!, 原始論文在(self.W / PW)加上1e-4的話會造成bug，刪掉他就沒事了
+            Token = torch.floor(x[:, 1] % (self.W / PW)) + \
                     torch.floor(x[:, 2] % (self.H / PH + b)) * int((self.W + 1) / PW)
             # print(Token, Token.size)
             t_double = x[:, 0].double()
