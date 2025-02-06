@@ -15,6 +15,12 @@ from tqdm import tqdm
 class BaseEventImageConverter(abc.ABC):
 
     def __init__(self, width=320, height=240, interval=0.5):
+        """
+
+        :param width: event camera width
+        :param height: event camera height
+        :param interval: merge events whose time difference is less than this value, some representation no need
+        """
         self.width = width
         self.height = height
 

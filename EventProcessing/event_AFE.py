@@ -12,21 +12,20 @@ from .BaseEventImageConverter import BaseEventImageConverter
 
 class EventAFEConverter(BaseEventImageConverter):
 
-    def __init__(self, width: int = 320, height: int = 240, interval: float = 0.5,
+    def __init__(self, width: int = 320, height: int = 240,
                  representation: Literal['rgb', 'gray_scale'] = 'rgb',
                  sample_event_threshold: int = 40,
                  sample_event_num_min: int = 100000
                  ):
         """
 
-        :param width:
-        :param height:
-        :param interval:
-        :param representation:
+        :param width: event camera width
+        :param height: event camera height
+        :param representation: output the image in rgb or gray_scale
         :param sample_event_threshold: Hyperparameter, the author indicates that 40 is the best parameter of the data set 'SeAct', the author indicates that the parameter values of each data set are different.
         :param sample_event_num_min: Hyperparameter, the author indicates that 100,000 is the best parameter of the data set 'SeAct', the author indicates that the parameter values of each data set are different.
         """
-        super().__init__(width=width, height=height, interval=interval)
+        super().__init__(width=width, height=height, interval=0)
         self.representation = representation
 
         # AFE Hyperparameter define

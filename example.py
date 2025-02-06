@@ -10,72 +10,86 @@ from EventProcessing import EventGTEConverter
 from EventProcessing import EventVoxelGridConverter
 
 
-testing_file = "E:/dataset/DailyDvs-200/test/DailyDvs-200/011/C11P4M0S3_20231116_10_59_47.npz.npy"
-testing_output_dir = "E:/dataset/DailyDvs-200/test/output/C11P4M0S3_20231116_10_59_47"
-
-
 def event_frame_example():
-    converter = EventFrameConverter(interval=0.5)
+    converter = EventFrameConverter(width=320, height=240, interval=0.5)
 
     in_path = testing_file
     output_path = testing_output_dir
 
-    converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
+    converter.events_to_event_images(input_filepath=in_path,
+                                     output_file_dir=os.path.join(output_path, converter.__class__.__name__))
 
 
 def event_count_example():
-    converter = EventCountConverter(interval=0.5)
+    converter = EventCountConverter(width=320, height=240, interval=0.5)
 
     in_path = testing_file
     output_path = testing_output_dir
 
-    converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
+    converter.events_to_event_images(input_filepath=in_path,
+                                     output_file_dir=os.path.join(output_path, converter.__class__.__name__))
 
 
 def event_time_surface_example():
-    converter = EventTimeSurfaceConverter(interval=0.5)
+    converter = EventTimeSurfaceConverter(width=320, height=240, interval=0.5)
 
     in_path = testing_file
     output_path = testing_output_dir
 
-    converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
+    converter.events_to_event_images(input_filepath=in_path,
+                                     output_file_dir=os.path.join(output_path, converter.__class__.__name__))
 
 
 def event_speed_invariant_time_surface_example():
-    converter = EventSpeedInvariantTimeSurfaceConverter(interval=0.5)
+    converter = EventSpeedInvariantTimeSurfaceConverter(width=320, height=240, interval=0.5)
 
     in_path = testing_file
     output_path = testing_output_dir
 
-    converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
+    converter.events_to_event_images(input_filepath=in_path,
+                                     output_file_dir=os.path.join(output_path, converter.__class__.__name__))
 
 
 def event_AFE_example():
-    converter = EventAFEConverter(interval=0.5)
+    converter = EventAFEConverter(width=320, height=240,
+                                  representation="rgb",
+                                  sample_event_threshold=40,
+                                  sample_event_num_min=100000)
 
     in_path = testing_file
     output_path = testing_output_dir
 
-    converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
+    converter.events_to_event_images(input_filepath=in_path,
+                                     output_file_dir=os.path.join(output_path, converter.__class__.__name__))
 
 
 def event_voxel_grid_example():
-    converter = EventVoxelGridConverter(interval=0.5)
+    converter = EventVoxelGridConverter(width=320, height=240,
+                                        voxel_bin_num=9)
 
     in_path = testing_file
     output_path = testing_output_dir
 
-    converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
+    converter.events_to_event_images(input_filepath=in_path,
+                                     output_file_dir=os.path.join(output_path, converter.__class__.__name__))
 
 
 def event_GTE_example():
-    converter = EventGTEConverter(interval=0.5)
+    converter = EventGTEConverter(width=320, height=240,
+                                  patch_size=(4, 4),
+                                  group_num=12)
 
     in_path = testing_file
     output_path = testing_output_dir
 
-    converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
+    converter.events_to_event_images(input_filepath=in_path,
+                                     output_file_dir=os.path.join(output_path, converter.__class__.__name__))
 
+
+testing_file = "src/C11P16M1S3_20231120_10_04_07.npy"  # .aedat4 or .npy
+testing_output_dir = "src/figs"
+# testing_file = r"E:\dataset\DailyDvs-200\test\DailyDvs-200\011\C11P7M1S1_20231117_10_52_44.npz.npy"  # .aedat4 or .npy
+# testing_output_dir = r"E:\dataset\DailyDvs-200\test\a"
 
 if __name__ == '__main__':
     if os.path.exists(testing_output_dir):
@@ -84,12 +98,19 @@ if __name__ == '__main__':
 
     start_time = time()
 
-    # event_frame_example()
-    # event_count_example()
-    # event_time_surface_example()
-    # event_speed_invariant_time_surface_example()
-    # event_AFE_example()
-    # event_voxel_grid_example()
+    print("event_frame_example")
+    event_frame_example()
+    print("event_count_example")
+    event_count_example()
+    print("event_time_surface_example")
+    event_time_surface_example()
+    print("event_speed_invariant_time_surface_example")
+    event_speed_invariant_time_surface_example()
+    print("event_AFE_example")
+    event_AFE_example()
+    print("event_voxel_grid_example")
+    event_voxel_grid_example()
+    print("event_GTE_example")
     event_GTE_example()
 
     end_time = time()

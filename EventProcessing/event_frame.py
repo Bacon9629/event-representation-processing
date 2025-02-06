@@ -11,6 +11,12 @@ from .BaseEventImageConverter import BaseEventImageConverter
 class EventFrameConverter(BaseEventImageConverter):
 
     def __init__(self, width=320, height=240, interval=0.5):
+        """
+
+        :param width: event camera width
+        :param height: event camera height
+        :param interval: merge events whose time difference is less than this value
+        """
         super().__init__(width=width, height=height, interval=interval)
 
     def _make_color_histo(self, events: ndarray):

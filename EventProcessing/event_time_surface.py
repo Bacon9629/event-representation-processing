@@ -13,6 +13,12 @@ from .BaseEventImageConverter import BaseEventImageConverter
 class EventTimeSurfaceConverter(BaseEventImageConverter):
 
     def __init__(self, width=320, height=240, interval=0.5):
+        """
+
+        :param width: event camera width
+        :param height: event camera height
+        :param interval: merge events whose time difference is less than this value
+        """
         super().__init__(width=width, height=height, interval=interval)
         self.time_window = int(interval * 1_000_000)  # 微秒
 

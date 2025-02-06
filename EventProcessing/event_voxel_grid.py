@@ -210,11 +210,12 @@ class EventVoxelGridConverter(BaseEventImageConverter):
         os.makedirs(output_file_dir, exist_ok=True)
         np.save(os.path.join(output_file_dir, 'voxel_grid.npy'), voxel_grid)
         for index, frame in enumerate(voxel_grid):
-            cv2.imwrite(os.path.join(output_file_dir, '{:08d}.png'.format(index)),
-                        cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX))
+            frame = cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX)
+            frame = frame.astype(np.uint8)
+            cv2.imwrite(os.path.join(output_file_dir, '{:08d}.png'.format(index)), frame)
 
-            cv2.imshow("Preview", frame)
-            cv2.waitKey(0)
+            # cv2.imshow("Preview", frame)
+            # cv2.waitKey(0)
 
 
 if __name__ == '__main__':

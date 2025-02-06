@@ -5,3 +5,4 @@ dv
 opencv-python
 matplotlib
 dv_processing
+torch

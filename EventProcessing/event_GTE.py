@@ -9,19 +9,18 @@ from .BaseEventImageConverter import BaseEventImageConverter
 
 class EventGTEConverter(BaseEventImageConverter):
 
-    def __init__(self, width: int = 320, height: int = 240, interval: float = 0.5,
+    def __init__(self, width: int = 320, height: int = 240,
                  patch_size: Tuple[int, int] = (4, 4),
                  group_num: int = 12,
                  ):
         """
 
-        :param width:
-        :param height:
-        :param interval:
+        :param width: event camera width
+        :param height: event camera height
         :param patch_size: Hyperparameter, The author sets it in the repo provided by the original paper as (4, 4)
         :param group_num: Hyperparameter, The author sets it to 12 in the repo provided by the original paper
         """
-        super().__init__(width=width, height=height, interval=interval)
+        super().__init__(width=width, height=height, interval=0)
         self.H = height
         self.W = width
 
