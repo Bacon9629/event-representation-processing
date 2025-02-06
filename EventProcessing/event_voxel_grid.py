@@ -9,17 +9,16 @@ from .BaseEventImageConverter import BaseEventImageConverter
 
 class EventVoxelGridConverter(BaseEventImageConverter):
 
-    def __init__(self, width: int = 320, height: int = 240, interval: float = 0.5,
+    def __init__(self, width: int = 320, height: int = 240,
                  voxel_bin_num: int = 9,
                  ):
         """
 
-        :param width:
-        :param height:
-        :param interval:
+        :param width: event camera width
+        :param height: event camera height
         :param voxel_bin_num: Hyperparameter, The author sets it to 9 in the repo provided by the original paper
         """
-        super().__init__(width=width, height=height, interval=interval)
+        super().__init__(width=width, height=height, interval=0)
         self.H = height
         self.W = width
 
@@ -180,6 +179,15 @@ class EventVoxelGridConverter(BaseEventImageConverter):
         bins = np.stack(bins)
         return bins
 
+    @staticmethod
+    def standardize_and_convert_to_image(arr):
+        mean = np.mean(arr)
+        std = np.std(arr)
+        standardized_arr = (arr - mean) / std if std != 0 else arr
+        normalized_arr = (standardized_arr - standardized_arr.min()) / (standardized_arr.max() - standardized_arr.min()) * 255
+        image_array = normalized_arr.astype(np.uint8)
+        return image_array
+
     def events_to_event_images(self, input_filepath: str, output_file_dir: str):
         if not os.path.exists(input_filepath):
             raise FileNotFoundError("File not found: {}".format(input_filepath))
@@ -195,15 +203,18 @@ class EventVoxelGridConverter(BaseEventImageConverter):
         x = torch.tensor(events['x'])
         y = torch.tensor(events['y'])
         pol = torch.tensor(events['polarity'])
-        voxel_grid = self.events_to_voxel(xs=x, ys=y, ts=ts, ps=pol, B=10, sensor_size=(self.H, self.W), temporal_bilinear=True)
+        voxel_grid = self.events_to_voxel(xs=x, ys=y, ts=ts, ps=pol, B=self.voxel_bin_num, sensor_size=(self.H, self.W), temporal_bilinear=True)
         # print(voxel_grid.shape)  # (10, 240, 320)
 
         # save
+        os.makedirs(output_file_dir, exist_ok=True)
+        np.save(os.path.join(output_file_dir, 'voxel_grid.npy'), voxel_grid)
         for index, frame in enumerate(voxel_grid):
-            cv2.imwrite(os.path.join(output_file_dir, '{:08d}.png'.format(index)), frame)
+            cv2.imwrite(os.path.join(output_file_dir, '{:08d}.png'.format(index)),
+                        cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX))
 
-            # cv2.imshow("Preview", frame)
-            # cv2.waitKey(0)
+            cv2.imshow("Preview", frame)
+            cv2.waitKey(0)
 
 
 if __name__ == '__main__':
