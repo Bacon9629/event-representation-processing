@@ -76,6 +76,7 @@ def event_voxel_grid_example():
 
 def event_GTE_example():
     converter = EventGTEConverter(width=320, height=240,
+                                  output_npy_or_frame="enhancement_frame",
                                   patch_size=(4, 4),
                                   group_num=12)
 
@@ -98,19 +99,19 @@ if __name__ == '__main__':
 
     start_time = time()
 
-    print("event_frame_example")
-    event_frame_example()
-    print("event_count_example")
-    event_count_example()
-    print("event_time_surface_example")
-    event_time_surface_example()
-    print("event_speed_invariant_time_surface_example")
-    event_speed_invariant_time_surface_example()
-    print("event_AFE_example")
-    event_AFE_example()
-    print("event_voxel_grid_example")
-    event_voxel_grid_example()
-    print("event_GTE_example")
+    # print("event_frame_example")
+    # event_frame_example()
+    # print("event_count_example")
+    # event_count_example()
+    # print("event_time_surface_example")
+    # event_time_surface_example()
+    # print("event_speed_invariant_time_surface_example")
+    # event_speed_invariant_time_surface_example()
+    # print("event_AFE_example")
+    # event_AFE_example()
+    # print("event_voxel_grid_example")
+    # event_voxel_grid_example()
+    # print("event_GTE_example")
     event_GTE_example()
 
     end_time = time()

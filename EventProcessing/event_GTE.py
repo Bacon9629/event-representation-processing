@@ -1,6 +1,7 @@
 import os
-from typing import Tuple
+from typing import Tuple, Literal
 
+import cv2
 import numpy as np
 import torch
 
@@ -10,6 +11,7 @@ from .BaseEventImageConverter import BaseEventImageConverter
 class EventGTEConverter(BaseEventImageConverter):
 
     def __init__(self, width: int = 320, height: int = 240,
+                 output_npy_or_frame: Literal['npy', 'ori_frame', 'enhancement_frame'] = 'npy',
                  patch_size: Tuple[int, int] = (4, 4),
                  group_num: int = 12,
                  ):
@@ -17,10 +19,12 @@ class EventGTEConverter(BaseEventImageConverter):
 
         :param width: event camera width
         :param height: event camera height
+        :param output_npy_or_frame: Choose what data format to output
         :param patch_size: Hyperparameter, The author sets it in the repo provided by the original paper as (4, 4)
         :param group_num: Hyperparameter, The author sets it to 12 in the repo provided by the original paper
         """
         super().__init__(width=width, height=height, interval=0)
+        self.output_npy_or_frame = output_npy_or_frame.lower().strip()
         self.H = height
         self.W = width
 
@@ -187,13 +191,15 @@ class EventGTEConverter(BaseEventImageConverter):
 
             """
             y = [時間分區數量, 2(polarity), 2(前段提到), patch內pixel數量, patch數量(PH*PW)]
- return (Batch, |____________________合併成channel___________________|, PH, PW)
+#return (Batch, |____________________合併成channel___________________|, PH, PW)
             return: (batch, group_num*polarity*patch內pixel, patch數量H, patch數量W)
             group_num: 時間區段*2 (假設group_num=12，code計算的方法是分成6個時間區段，最後在透過get_repr算出兩個channel，return時把兩個channel合併)
             """
         # print('******* input token end ********')
-        return y.reshape(1, -1, PH,
-                         PW)  # Output: y → [1, group_num * '2' * (patch_size ** 2), H // patch_size, W // patch_size] tensor.
+
+        # Output: y → [1, group_num * '2' * (patch_size ** 2), H // patch_size, W // patch_size] tensor.
+        return y.reshape(1, -1, PH, PW)
+
 
     def events_to_event_images(self, input_filepath: str, output_file_dir: str):
         if not os.path.exists(input_filepath):
@@ -222,11 +228,64 @@ class EventGTEConverter(BaseEventImageConverter):
         t = t[:, :] - t[0, 0]
         events = torch.cat([t, x, y, p], dim=1) / 1.0
 
-        result = self.forward(events)[0]  # [channel, H // patch_size, W // patch_size]
+        result = self.forward(events)[0].detach().cpu().numpy()  # [channel, H // patch_size, W // patch_size]
 
-        result = result.detach().cpu().numpy()
         os.makedirs(output_file_dir, exist_ok=True)
-        np.save(os.path.join(output_file_dir, "GTE_representation"), result)
+
+        if self.output_npy_or_frame == 'npy':
+            np.save(os.path.join(output_file_dir, "GTE_representation"), result)
+            return
+        elif 'frame' not in self.output_npy_or_frame:
+            raise NotImplementedError("Unsupported output format..")
+
+        """
+        Data pipeline:
+        result shape: (time_div, 2(polarity), 2(hist), patch內pixel, patch)
+        result shape: (time_div, 2(polarity), 2(hist), patch內pixel y, patch內pixel x, patch y, patch x)
+        result shape: (time_div, 2(polarity), 2(hist), patch y, patch內pixel y, patch x, patch內pixel x)
+        result shape: (time_div, 2(polarity), 2(hist), image y, image x)
+        """
+        PH, PW = int((self.H + 1) / self.patch_size[0]), int((self.W + 1) / self.patch_size[1])
+        result = result.reshape(self.time_div, 2, 2, self.patch_size[0], self.patch_size[1], PH, PW)
+        result = result.transpose(0, 1, 2, 5, 3, 6, 4)
+        result = result.reshape(self.time_div, 2, 2, self.H, self.W)
+
+        result_polarity_positive_hist0 = result[:, 0, 0, :, :]  # shape = (time_div, y, x)
+        result_polarity_positive_hist1 = result[:, 0, 1, :, :]  # shape = (time_div, y, x)
+        result_polarity_negative_hist0 = result[:, 1, 0, :, :]  # shape = (time_div, y, x)
+        result_polarity_negative_hist1 = result[:, 1, 1, :, :]  # shape = (time_div, y, x)
+
+        result_hist1_fusion = (result_polarity_positive_hist1 + result_polarity_negative_hist1) / 2
+
+        result_polarity_positive_hist0 = np.expand_dims(result_polarity_positive_hist0, axis=-1)
+        result_polarity_negative_hist0 = np.expand_dims(result_polarity_negative_hist0, axis=-1)
+        result_hist1_fusion = np.expand_dims(result_hist1_fusion, axis=-1)
+
+        result = np.concatenate(
+            (result_polarity_positive_hist0, result_polarity_negative_hist0, result_hist1_fusion),
+            axis=-1)
+
+        frame_list = []
+        for index, frame in enumerate(result):
+            frame = cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX)  # 確保數值範圍在 0-255
+            frame = frame.astype(np.uint8)
+
+            if self.output_npy_or_frame == 'ori_frame':
+                frame_list.append(frame)
+                continue
+
+            if self.output_npy_or_frame != 'enhancement_frame':
+                raise NotImplementedError("Unsupported output format..")
+
+            frame[:, :, 0] = cv2.equalizeHist(frame[:, :, 0])
+            frame[:, :, 1] = cv2.equalizeHist(frame[:, :, 1])
+            frame[:, :, 2] = cv2.equalizeHist(frame[:, :, 2])
+            frame_list.append(frame)
+
+        for index, frame in enumerate(frame_list):
+            cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
+            cv2.imshow("frame", frame)
+            cv2.waitKey(0)
 
 
 if __name__ == '__main__':
