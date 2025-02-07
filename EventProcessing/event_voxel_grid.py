@@ -1,4 +1,5 @@
 import os
+from typing import Literal
 
 import cv2
 import numpy as np
@@ -10,15 +11,18 @@ from .BaseEventImageConverter import BaseEventImageConverter
 class EventVoxelGridConverter(BaseEventImageConverter):
 
     def __init__(self, width: int = 320, height: int = 240,
+                 output_npy_or_frame: Literal['npy', 'ori_frame', 'enhancement_frame'] = 'npy',
                  voxel_bin_num: int = 9,
                  ):
         """
 
         :param width: event camera width
         :param height: event camera height
+        :param output_npy_or_frame: Choose what data format to output
         :param voxel_bin_num: Hyperparameter, The author sets it to 9 in the repo provided by the original paper
         """
         super().__init__(width=width, height=height, interval=0)
+        self.output_npy_or_frame = output_npy_or_frame.lower().strip()
         self.H = height
         self.W = width
 
@@ -208,14 +212,29 @@ class EventVoxelGridConverter(BaseEventImageConverter):
 
         # save
         os.makedirs(output_file_dir, exist_ok=True)
-        np.save(os.path.join(output_file_dir, 'voxel_grid.npy'), voxel_grid)
+        if self.output_npy_or_frame == 'npy':
+            np.save(os.path.join(output_file_dir, 'voxel_grid.npy'), voxel_grid)
+            return
+        elif "frame" not in self.output_npy_or_frame:
+            raise NotImplementedError
+
+        frame_list = []
         for index, frame in enumerate(voxel_grid):
             frame = cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX)
             frame = frame.astype(np.uint8)
+
+            if self.output_npy_or_frame == 'ori_frame':
+                frame_list.append(frame)
+            elif self.output_npy_or_frame == 'enhancement_frame':
+                frame_list.append(cv2.equalizeHist(frame))
+            else:
+                raise NotImplementedError
+
+        for index, frame in enumerate(frame_list):
             cv2.imwrite(os.path.join(output_file_dir, '{:08d}.png'.format(index)), frame)
 
-            # cv2.imshow("Preview", frame)
-            # cv2.waitKey(0)
+            cv2.imshow("Preview", frame)
+            cv2.waitKey(0)
 
 
 if __name__ == '__main__':

@@ -63,15 +63,40 @@ def event_AFE_example():
                                      output_file_dir=os.path.join(output_path, converter.__class__.__name__))
 
 
-def event_voxel_grid_example():
+def event_voxel_grid_npy_example():
     converter = EventVoxelGridConverter(width=320, height=240,
+                                        output_npy_or_frame="npy",
                                         voxel_bin_num=9)
 
     in_path = testing_file
     output_path = testing_output_dir
 
     converter.events_to_event_images(input_filepath=in_path,
-                                     output_file_dir=os.path.join(output_path, converter.__class__.__name__))
+                                     output_file_dir=os.path.join(output_path, f"{converter.__class__.__name__}_{converter.output_npy_or_frame}"))
+
+
+def event_voxel_grid_ori_image_example():
+    converter = EventVoxelGridConverter(width=320, height=240,
+                                        output_npy_or_frame="ori_frame",
+                                        voxel_bin_num=9)
+
+    in_path = testing_file
+    output_path = testing_output_dir
+
+    converter.events_to_event_images(input_filepath=in_path,
+                                     output_file_dir=os.path.join(output_path, f"{converter.__class__.__name__}_{converter.output_npy_or_frame}"))
+
+
+def event_voxel_grid_enhancement_image_example():
+    converter = EventVoxelGridConverter(width=320, height=240,
+                                        output_npy_or_frame="enhancement_frame",
+                                        voxel_bin_num=9)
+
+    in_path = testing_file
+    output_path = testing_output_dir
+
+    converter.events_to_event_images(input_filepath=in_path,
+                                     output_file_dir=os.path.join(output_path, f"{converter.__class__.__name__}_{converter.output_npy_or_frame}"))
 
 
 def event_GTE_npy_example():
@@ -125,24 +150,28 @@ if __name__ == '__main__':
 
     start_time = time()
 
-    print("event_frame_example")
-    event_frame_example()
-    print("event_count_example")
-    event_count_example()
-    print("event_time_surface_example")
-    event_time_surface_example()
-    print("event_speed_invariant_time_surface_example")
-    event_speed_invariant_time_surface_example()
-    print("event_AFE_example")
-    event_AFE_example()
-    print("event_voxel_grid_example")
-    event_voxel_grid_example()
-    print("event_GTE_npy_example")
-    event_GTE_npy_example()
-    print("event_GTE_ori_image_example")
-    event_GTE_ori_image_example()
-    print("event_GTE_enhancement_image_example")
-    event_GTE_enhancement_image_example()
+    # print("event_frame_example")
+    # event_frame_example()
+    # print("event_count_example")
+    # event_count_example()
+    # print("event_time_surface_example")
+    # event_time_surface_example()
+    # print("event_speed_invariant_time_surface_example")
+    # event_speed_invariant_time_surface_example()
+    # print("event_AFE_example")
+    # event_AFE_example()
+    print("event_voxel_grid_npy_example")
+    event_voxel_grid_npy_example()
+    print("event_voxel_grid_ori_image_example")
+    event_voxel_grid_ori_image_example()
+    print("event_voxel_grid_enhancement_image_example")
+    event_voxel_grid_enhancement_image_example()
+    # print("event_GTE_npy_example")
+    # event_GTE_npy_example()
+    # print("event_GTE_ori_image_example")
+    # event_GTE_ori_image_example()
+    # print("event_GTE_enhancement_image_example")
+    # event_GTE_enhancement_image_example()
 
     end_time = time()
 
