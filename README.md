@@ -84,6 +84,8 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
 |----------------|---------------|----------------------|
 | Interval       | 0.5           | NO                   |
 
+> This example event stream appears less distinct in the time surface representation series due to the high density of event data. However, a slight gradient can still be observed in the first image.
+
 ![00000002.png](src%2Ffigs%2FEventTimeSurfaceConverter%2F00000002.png)
 ![00000003.png](src%2Ffigs%2FEventTimeSurfaceConverter%2F00000003.png)
 ![00000004.png](src%2Ffigs%2FEventTimeSurfaceConverter%2F00000004.png)
