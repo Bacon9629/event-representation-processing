@@ -1,32 +1,30 @@
 # event-representation-processing
 
 * Code for various methods to convert event-based camera data into RGB-like representations.
-* This repository consolidates various research papers on Event Representation methods, integrating and modifying them
-  to provide a simple, straightforward, and user-friendly Python conversion tool.
-* During the integration process, the original source code and algorithms are preserved as much as possible to ensure
-  their effectiveness.
-* Here is the script for converting the DailyDVS200 dataset.
+* This repository integrates various event representation methods from multiple research papers, refining and modifying them to provide a simple, intuitive, and user-friendly Python conversion tool.
+* During the integration process, the original source code and algorithms are preserved as much as possible to ensure their effectiveness.
+* This is the script for converting the DailyDVS200 dataset -> [DailyDVS200_dataset_use](DailyDVS200_dataset_use)
 ---
 * 這個 repo 整合了多篇論文中的 Event Representation 方法，並進行改進與調整，旨在提供一個簡單、直觀且易於使用的 Python 轉換工具。
 * 整合過程中，盡量保留來源原始碼與演算法，以確保其有效性
 * 這裡順便附上dataset DailyDVS200 轉換用的腳本 -> [DailyDVS200_dataset_use](DailyDVS200_dataset_use)
 ---
 
-## 👀 How to use? 
+## 🚀 Quick Start Guide
 
-#### Python environment settings:
-
-```shell
+#### 🏗️ 1. Install Dependencies
+```sh
 conda create -n event_representation python=3.10
 conda activate event_representation
-pip install -r requirments.txt
+pip install -r requirements.txt
 ```
 
-#### How to run the code?
+#### 🔄 2. Convert Event Data
 
 ```python
 from EventProcessing import EventFrameConverter
 
+# Other representation converter
 # from EventProcessing import EventCountConverter
 # from EventProcessing import EventTimeSurfaceConverter
 # from EventProcessing import EventSpeedInvariantTimeSurfaceConverter
@@ -43,9 +41,9 @@ converter = EventFrameConverter(width=320, height=240, interval=0.5)
 converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_path)
 ```
 
-## 👀 Current representation
+## 📚 Current representation
 
-### Event Frame
+### 📌 Event Frame
 
 * Method reference: Unknown
 * Published in: Unknown
@@ -61,7 +59,7 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
 ![00000005.png](src%2Ffigs%2FEventFrameConverter%2F00000005.png)
 
 
-### Event Count (Event Histogram, Event Count Histogram)
+### 📌 Event Count (Event Histogram, Event Count Histogram)
 
 * Method reference: Event-based vision meets deep learning on steering prediction for self-driving cars
 * Published in: CVPR 2018
@@ -76,7 +74,7 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
 ![00000004.png](src%2Ffigs%2FEventCountConverter%2F00000004.png)
 ![00000005.png](src%2Ffigs%2FEventCountConverter%2F00000005.png)
 
-### Time Surface
+### 📌 Time Surface
 
 * Method reference: Event-based visual flow
 * Published in: IEEE Transactions on Neural Networks and Learning Systems 2014
@@ -91,7 +89,7 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
 ![00000004.png](src%2Ffigs%2FEventTimeSurfaceConverter%2F00000004.png)
 ![00000005.png](src%2Ffigs%2FEventTimeSurfaceConverter%2F00000005.png)
 
-### Speed Invariant Time Surface
+### 📌 Speed Invariant Time Surface
 
 * Method reference: Speed invariant time surface for learning to detect corner points with event-based cameras
 * Published in: CVPR 2019
@@ -106,7 +104,7 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
 ![00000004.png](src%2Ffigs%2FEventSpeedInvariantTimeSurfaceConverter%2F00000004.png)
 ![00000005.png](src%2Ffigs%2FEventSpeedInvariantTimeSurfaceConverter%2F00000005.png)
 
-### Adaptive Fine-grained Event (AFE)
+### 📌 Adaptive Fine-grained Event (AFE)
 
 * Method reference: ExACT: Language-guided Conceptual Reasoning and Uncertainty Estimation for Event-based Action
   Recognition and More
@@ -125,7 +123,7 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
 ![00000017.png](src%2Ffigs%2FEventAFEConverter%2F00000017.png)
 ![00000018.png](src%2Ffigs%2FEventAFEConverter%2F00000018.png)
 
-### Voxel Grid
+### 📌 Voxel Grid
 
 * Method reference: Unsupervised event-based learning of optical flow, depth and egomotion.
 * Published in: CVPRW 2019
@@ -136,7 +134,7 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
 | voxel_bin_num  | 9             | From the original paper |
 
 > The image appears to have nothing, but it's actually just too dark. You can refer to the plot below, which shows the pixel value distribution of the VoxelGrid image.  
-> Since the image is barely visible, I have also saved the .npy file for you to use directly.  
+> Because the image is barely visible, an additional .npy file has been saved for direct usage.  
 > npy shape: [voxel_bin_num, height, width]  
 > ![VoxelGrid image pixel value distribution.png](src%2FVoxelGrid%20image%20pixel%20value%20distribution.png)  
 > Y-axis: Image pixel value  
@@ -147,7 +145,7 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
 ![00000006.png](src%2Ffigs%2FEventVoxelGridConverter%2F00000006.png)
 ![00000007.png](src%2Ffigs%2FEventVoxelGridConverter%2F00000007.png)
 
-### Group Token Embedding (GTE)
+### 📌 Group Token Embedding (GTE)
 
 * Method reference: GET: Group Event Transformer for Event-Based Vision
 * Published in: ICCV 2023
