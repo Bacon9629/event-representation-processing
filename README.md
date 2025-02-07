@@ -170,6 +170,11 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
     * https://github.com/Peterande/GET-Group-Event-Transformer/blob/master/event_based/event_token.py
     * https://github.com/QiWang233/DailyDVS-200/blob/main/models/GET/event_based/event_token.py
 
+| Hyperparameter | Default Value | Default Value Source    |
+|----------------|---------------|-------------------------|
+| patch_size     | (4, 4)        | From the original paper |
+| group_num      | 12            | From the original paper |
+
 > In the original repository, the event stream undergoes [random augmentation](https://github.com/Peterande/GET-Group-Event-Transformer/blob/d979d7a243201d4c86cd1765636b167d7701d881/data/build.py#L182).  
 > However, this repository does not apply the same augmentation due to the following reasons:
 > 
@@ -206,8 +211,3 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
 ![00000002.png](src%2Ffigs%2FEventGTEConverter_enhancement_frame%2F00000002.png)
 ![00000003.png](src%2Ffigs%2FEventGTEConverter_enhancement_frame%2F00000003.png)
 ![00000004.png](src%2Ffigs%2FEventGTEConverter_enhancement_frame%2F00000004.png)
-
-| Hyperparameter | Default Value | Default Value Source    |
-|----------------|---------------|-------------------------|
-| patch_size     | (4, 4)        | From the original paper |
-| group_num      | 12            | From the original paper |
