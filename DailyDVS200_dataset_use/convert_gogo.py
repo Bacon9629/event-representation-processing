@@ -53,7 +53,7 @@ def process_dataset(converter: BaseEventImageConverter, file_extension, num_work
     """
     Generalized function to process .npy or .aedat4 files using parallel processing.
     """
-    print(f"Using {converter.__class__.__name__}")
+    print(f"Using {converter.__class__.__name__} interval: {converter.interval}")
 
     data_root = "/media/2TB_1/dataset/DailyDVS-200" if sys.platform == 'linux' else r"E:/dataset/DailyDvs-200"
     out_root = "/media/2TB_1/Bacon/dataset/DailyDvs-200" if sys.platform == 'linux' else r"E:/dataset/DailyDvs-200"
@@ -61,7 +61,7 @@ def process_dataset(converter: BaseEventImageConverter, file_extension, num_work
     file_list = glob.glob(fr"{data_root}/DailyDvs-200/*/*.{file_extension}")
     file_dicts = load_file_descriptions(data_root)
 
-    output_file_list = []
+    input_output_file_pairs = []
 
     for item in file_list:
         file_name = os.path.basename(item).split('.')[0]
@@ -71,14 +71,17 @@ def process_dataset(converter: BaseEventImageConverter, file_extension, num_work
             if file_name in file_dicts[split]:
                 found_in_split = True
                 label = file_dicts[split][file_name]
-                output_file_list.append(
-                    rf"{out_root}/{converter.__class__.__name__}_interval_{converter.interval}/{split}/{label}/{file_name}"
+                input_output_file_pairs.append(
+                    (
+                        item,
+                        rf"{out_root}/{converter.__class__.__name__}_interval_{converter.interval}/{split}/{label}/{file_name}"
+                    )
                 )
 
         if not found_in_split:
             raise ValueError(f"{file_name} not found in description train/val/test")
 
-    tasks = [(converter, in_path, out_path) for in_path, out_path in zip(file_list, output_file_list)]
+    tasks = [(converter, in_path, out_path) for in_path, out_path in input_output_file_pairs]
 
     if num_workers is None:
         num_workers = 0
@@ -100,4 +103,12 @@ if __name__ == '__main__':
     # converter = EventVoxelGridConverter(interval=0.5, voxel_bin_num=9)
     # converter = EventGTEConverter(interval=0.5, patch_size=(4, 4), group_num=12)
 
-    process_dataset(converter=EventVoxelGridConverter(interval=0.5, voxel_bin_num=9), file_extension='aedat4', num_workers=cpu_count()//4)
+    process_dataset(converter=EventFrameConverter(interval=0.5), file_extension='aedat4', num_workers=cpu_count())
+    process_dataset(converter=EventFrameConverter(interval=0.25), file_extension='aedat4', num_workers=cpu_count())
+    process_dataset(converter=EventFrameConverter(interval=0.125), file_extension='aedat4', num_workers=cpu_count())
+    process_dataset(converter=EventCountConverter(interval=0.5), file_extension='aedat4', num_workers=cpu_count())
+    process_dataset(converter=EventTimeSurfaceConverter(interval=0.5), file_extension='aedat4', num_workers=cpu_count())
+    process_dataset(converter=EventSpeedInvariantTimeSurfaceConverter(interval=0.5), file_extension='aedat4', num_workers=cpu_count())
+    process_dataset(converter=EventAFEConverter(interval=0.5, sample_event_threshold=40, sample_event_num_min=100000), file_extension='aedat4', num_workers=cpu_count())
+    process_dataset(converter=EventVoxelGridConverter(interval=0.5, voxel_bin_num=9), file_extension='aedat4', num_workers=4)
+    process_dataset(converter=EventGTEConverter(interval=0.5, patch_size=(4, 4), group_num=12), file_extension='aedat4', num_workers=4)
