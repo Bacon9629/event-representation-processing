@@ -155,21 +155,42 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
     * https://github.com/Peterande/GET-Group-Event-Transformer/blob/master/event_based/event_token.py
     * https://github.com/QiWang233/DailyDVS-200/blob/main/models/GET/event_based/event_token.py
 
-> Since the number of channels is 4, it cannot be converted into an image. Therefore, it is saved as an `.npy` file with the shape:  
-> `[channel, H // patch_size, W // patch_size]`
->
 > In the original repository, the event stream undergoes [random augmentation](https://github.com/Peterande/GET-Group-Event-Transformer/blob/d979d7a243201d4c86cd1765636b167d7701d881/data/build.py#L182).  
 > However, this repository does not apply the same augmentation due to the following reasons:
->
+> 
 > * **Comparability**: Ensuring that all representations share the same training dataset conditions, reducing experimental errors.
 > * **Efficiency**: Using the author's augmentation method prevents dataset preprocessing, requiring augmentation to be applied during training, which increases processing time.
 
+#### 提供三種輸出模式
+> Since the number of channels is 4, it can't convert it directly into image. Therefore, provides three output modes for users to choose from
 
-> 因通道數是4無法轉成圖片，因此輸出成npy，npy shape: `[channel, H // patch_size, W // patch_size]`
-> 
-> 在原始repo內，他有對event stream進行[random augmentation](https://github.com/Peterande/GET-Group-Event-Transformer/blob/d979d7a243201d4c86cd1765636b167d7701d881/data/build.py#L182)，但因為以下原因，本repo沒這麼做  
->* **可比性**: 使所有representation擁有同一個training dataset條件，降低實驗誤差  
->* **效率**: 若使用作者提供的augmentation，資料集無法預先處理，這樣就必須在training過程中花時間處理  
+##### 1. npy
+* It is saved as an `.npy` file with the shape: `[channel, H // patch_size, W // patch_size]`
+* Follow the representation of the original paper.
+
+##### 2. origin_frame
+> Not the original paper provided
+* The image appears to have nothing, but it's actually just too dark. You can refer to the plot below, which shows the pixel value distribution of the origin_frame image ([src image](src%2Ffigs%2FEventGTEConverter_ori_frame%2F00000000.png)).  
+* Y-axis: Image pixel value | X-axis: Image pixel index  
+* ![GTE image pixel value distribution before equalize.png](src%2FGTE%20image%20pixel%20value%20distribution%20before%20equalize.png)
+
+![00000001.png](src%2Ffigs%2FEventGTEConverter_ori_frame%2F00000001.png)
+![00000002.png](src%2Ffigs%2FEventGTEConverter_ori_frame%2F00000002.png)
+![00000003.png](src%2Ffigs%2FEventGTEConverter_ori_frame%2F00000003.png)
+![00000004.png](src%2Ffigs%2FEventGTEConverter_ori_frame%2F00000004.png)
+
+
+##### 3. enhancement_frame
+> Not the original paper provided
+* Since the original frames are too dim, apply cv2.equalizeHist individually to each frame channel.
+* Here is the pixel value distribution ([00000000.png](src%2Ffigs%2FEventGTEConverter_enhancement_frame%2F00000000.png))
+* Y-axis: Image pixel value | X-axis: Image pixel index
+* ![GTE image pixel value distribution after equalize.png](src%2FGTE%20image%20pixel%20value%20distribution%20after%20equalize.png)
+
+![00000001.png](src%2Ffigs%2FEventGTEConverter_enhancement_frame%2F00000001.png)
+![00000002.png](src%2Ffigs%2FEventGTEConverter_enhancement_frame%2F00000002.png)
+![00000003.png](src%2Ffigs%2FEventGTEConverter_enhancement_frame%2F00000003.png)
+![00000004.png](src%2Ffigs%2FEventGTEConverter_enhancement_frame%2F00000004.png)
 
 | Hyperparameter | Default Value | Default Value Source    |
 |----------------|---------------|-------------------------|

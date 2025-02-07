@@ -284,8 +284,8 @@ class EventGTEConverter(BaseEventImageConverter):
 
         for index, frame in enumerate(frame_list):
             cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
-            cv2.imshow("frame", frame)
-            cv2.waitKey(0)
+            # cv2.imshow("frame", frame)
+            # cv2.waitKey(0)
 
 
 if __name__ == '__main__':
