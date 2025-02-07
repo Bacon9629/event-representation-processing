@@ -135,17 +135,32 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
 |----------------|---------------|-------------------------|
 | voxel_bin_num  | 9             | From the original paper |
 
-> The image appears to have nothing, but it's actually just too dark. You can refer to the plot below, which shows the pixel value distribution of the VoxelGrid image.  
-> Because the image is barely visible, an additional .npy file has been saved for direct usage.  
-> npy shape: [voxel_bin_num, height, width]  
-> ![VoxelGrid image pixel value distribution.png](src%2FVoxelGrid%20image%20pixel%20value%20distribution.png)  
-> Y-axis: Image pixel value  
-> X-axis: Image pixel index  
+#### Three output modes are provided
+> Since the image is to dark. Therefore, provides three output modes for users to choose from 
 
-![00000004.png](src%2Ffigs%2FEventVoxelGridConverter%2F00000004.png)
-![00000005.png](src%2Ffigs%2FEventVoxelGridConverter%2F00000005.png)
-![00000006.png](src%2Ffigs%2FEventVoxelGridConverter%2F00000006.png)
-![00000007.png](src%2Ffigs%2FEventVoxelGridConverter%2F00000007.png)
+##### 1. npy
+* It is saved as an `.npy` file with the shape: `[voxel_bin_num, height, width] `
+* Follow the representation of the original paper.
+
+##### 2. origin_frame
+> Not the original paper provided
+* The image appears to have nothing, but it's actually just too dark. You can refer to the plot below, which shows the pixel value distribution of the origin_frame image ([src image](src%2Ffigs%2FEventGTEConverter_ori_frame%2F00000000.png)).  
+* Y-axis: Image pixel value | X-axis: Image pixel index  
+* ![VoxelGrid image pixel value distribution.png](src%2FVoxelGrid%20image%20pixel%20value%20distribution.png)
+
+![00000003.png](src%2Ffigs%2FEventVoxelGridConverter_ori_frame%2F00000003.png)
+![00000004.png](src%2Ffigs%2FEventVoxelGridConverter_ori_frame%2F00000004.png)
+![00000005.png](src%2Ffigs%2FEventVoxelGridConverter_ori_frame%2F00000005.png)
+![00000006.png](src%2Ffigs%2FEventVoxelGridConverter_ori_frame%2F00000006.png)
+
+##### 3. enhancement_frame
+> Not the original paper provided
+* Since the original frames are too dim, apply cv2.equalizeHist individually to each frame channel.
+
+![00000003.png](src%2Ffigs%2FEventVoxelGridConverter_enhancement_frame%2F00000003.png)
+![00000004.png](src%2Ffigs%2FEventVoxelGridConverter_enhancement_frame%2F00000004.png)
+![00000005.png](src%2Ffigs%2FEventVoxelGridConverter_enhancement_frame%2F00000005.png)
+![00000006.png](src%2Ffigs%2FEventVoxelGridConverter_enhancement_frame%2F00000006.png)
 
 ### 📌 Group Token Embedding (GTE)
 
