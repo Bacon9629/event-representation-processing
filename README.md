@@ -161,7 +161,7 @@ converter.events_to_event_images(input_filepath=in_path, output_file_dir=output_
 > * **Comparability**: Ensuring that all representations share the same training dataset conditions, reducing experimental errors.
 > * **Efficiency**: Using the author's augmentation method prevents dataset preprocessing, requiring augmentation to be applied during training, which increases processing time.
 
-#### 提供三種輸出模式
+#### Three output modes are provided
 > Since the number of channels is 4, it can't convert it directly into image. Therefore, provides three output modes for users to choose from
 
 ##### 1. npy
