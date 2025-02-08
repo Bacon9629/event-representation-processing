@@ -43,6 +43,7 @@ class EventCountConverter(BaseEventImageConverter):
 
             accumulator.accept(store)
             result_frames.append(accumulator.generateFrame().image)
+            accumulator.clear()
             store = dv_p.EventStore()
 
             # # Show the accumulated image
