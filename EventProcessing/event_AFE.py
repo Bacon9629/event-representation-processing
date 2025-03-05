@@ -153,7 +153,7 @@ class EventAFEConverter(BaseEventImageConverter):
         frame_list2 = self.adaptive_event_sampling(events_stream[divide_N:, :])
         return np.concatenate((frame_list1, frame_list2), axis=0)
 
-    def events_to_event_images(self, input_filepath: str, output_file_dir: str):
+    def events_to_event_images(self, input_filepath: str, output_file_dir: str = None):
         if not os.path.exists(input_filepath):
             raise FileNotFoundError("File not found: {}".format(input_filepath))
 
@@ -164,21 +164,25 @@ class EventAFEConverter(BaseEventImageConverter):
         else:
             raise NotImplementedError("File type not supported.")
 
-        ts = events['timestamp'].tolist()
-        x = events['x'].tolist()
-        y = events['y'].tolist()
-        pol = events['polarity'].tolist()
-        events_stream = np.array([x, y, ts, pol]).transpose()
+        from time_cost_record import CostRecord
+        for i in range(100):
+            with CostRecord(self.__class__.__name__):
+                ts = events['timestamp'].tolist()
+                x = events['x'].tolist()
+                y = events['y'].tolist()
+                pol = events['polarity'].tolist()
+                events_stream = np.array([x, y, ts, pol]).transpose()
 
-        all_frame = self.adaptive_event_sampling(events_stream)
-        all_frame = np.array(all_frame)  # T,H,W,3
+                all_frame = self.adaptive_event_sampling(events_stream)
+                all_frame = np.array(all_frame)  # T,H,W,3
 
-        os.makedirs(output_file_dir, exist_ok=True)
-        for index, frame in enumerate(all_frame):
-            cv2.imwrite(os.path.join(output_file_dir, '{:08d}.png'.format(index)), frame)
-            # # Show the accumulated image
-            # cv2.imshow("Preview", frame)
-            # cv2.waitKey(0)
+        if output_file_dir is not None:
+            os.makedirs(output_file_dir, exist_ok=True)
+            for index, frame in enumerate(all_frame):
+                cv2.imwrite(os.path.join(output_file_dir, '{:08d}.png'.format(index)), frame)
+                # # Show the accumulated image
+                # cv2.imshow("Preview", frame)
+                # cv2.waitKey(0)
 
 
 if __name__ == '__main__':

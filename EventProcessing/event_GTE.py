@@ -201,7 +201,7 @@ class EventGTEConverter(BaseEventImageConverter):
         return y.reshape(1, -1, PH, PW)
 
 
-    def events_to_event_images(self, input_filepath: str, output_file_dir: str):
+    def events_to_event_images(self, input_filepath: str, output_file_dir: str = None):
         if not os.path.exists(input_filepath):
             raise FileNotFoundError("File not found: {}".format(input_filepath))
 
@@ -225,67 +225,73 @@ class EventGTEConverter(BaseEventImageConverter):
             y = torch.tensor(events['y']).unsqueeze(1)
             p = torch.tensor(events['polarity']).unsqueeze(1)
 
-        t = t[:, :] - t[0, 0]
-        events = torch.cat([t, x, y, p], dim=1) / 1.0
+        from time_cost_record import CostRecord
+        for i in range(100):
+            with CostRecord(self.__class__.__name__):
+                t = t[:, :] - t[0, 0]
+                events = torch.cat([t, x, y, p], dim=1) / 1.0
 
-        result = self.forward(events)[0].detach().cpu().numpy()  # [channel, H // patch_size, W // patch_size]
+                result = self.forward(events)[0].detach().cpu().numpy()  # [channel, H // patch_size, W // patch_size]
 
-        os.makedirs(output_file_dir, exist_ok=True)
 
-        if self.output_npy_or_frame == 'npy':
-            np.save(os.path.join(output_file_dir, "GTE_representation"), result)
-            return
-        elif 'frame' not in self.output_npy_or_frame:
-            raise NotImplementedError("Unsupported output format..")
-
-        """
-        Data pipeline:
-        result shape: (time_div, 2(polarity), 2(hist), patch內pixel, patch)
-        result shape: (time_div, 2(polarity), 2(hist), patch內pixel y, patch內pixel x, patch y, patch x)
-        result shape: (time_div, 2(polarity), 2(hist), patch y, patch內pixel y, patch x, patch內pixel x)
-        result shape: (time_div, 2(polarity), 2(hist), image y, image x)
-        """
-        PH, PW = int((self.H + 1) / self.patch_size[0]), int((self.W + 1) / self.patch_size[1])
-        result = result.reshape(self.time_div, 2, 2, self.patch_size[0], self.patch_size[1], PH, PW)
-        result = result.transpose(0, 1, 2, 5, 3, 6, 4)
-        result = result.reshape(self.time_div, 2, 2, self.H, self.W)
-
-        result_polarity_positive_hist0 = result[:, 0, 0, :, :]  # shape = (time_div, y, x)
-        result_polarity_positive_hist1 = result[:, 0, 1, :, :]  # shape = (time_div, y, x)
-        result_polarity_negative_hist0 = result[:, 1, 0, :, :]  # shape = (time_div, y, x)
-        result_polarity_negative_hist1 = result[:, 1, 1, :, :]  # shape = (time_div, y, x)
-
-        result_hist1_fusion = (result_polarity_positive_hist1 + result_polarity_negative_hist1) / 2
-
-        result_polarity_positive_hist0 = np.expand_dims(result_polarity_positive_hist0, axis=-1)
-        result_polarity_negative_hist0 = np.expand_dims(result_polarity_negative_hist0, axis=-1)
-        result_hist1_fusion = np.expand_dims(result_hist1_fusion, axis=-1)
-
-        result = np.concatenate(
-            (result_polarity_positive_hist0, result_polarity_negative_hist0, result_hist1_fusion),
-            axis=-1)
-
-        frame_list = []
-        for index, frame in enumerate(result):
-            frame = cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX)  # 確保數值範圍在 0-255
-            frame = frame.astype(np.uint8)
-
-            if self.output_npy_or_frame == 'ori_frame':
-                frame_list.append(frame)
-                continue
-
-            if self.output_npy_or_frame != 'enhancement_frame':
+            if self.output_npy_or_frame == 'npy':
+                if output_file_dir is not None:
+                    os.makedirs(output_file_dir, exist_ok=True)
+                    np.save(os.path.join(output_file_dir, "GTE_representation"), result)
+                return
+            elif 'frame' not in self.output_npy_or_frame:
                 raise NotImplementedError("Unsupported output format..")
 
-            frame[:, :, 0] = cv2.equalizeHist(frame[:, :, 0])
-            frame[:, :, 1] = cv2.equalizeHist(frame[:, :, 1])
-            frame[:, :, 2] = cv2.equalizeHist(frame[:, :, 2])
-            frame_list.append(frame)
+            """
+            Data pipeline:
+            result shape: (time_div, 2(polarity), 2(hist), patch內pixel, patch)
+            result shape: (time_div, 2(polarity), 2(hist), patch內pixel y, patch內pixel x, patch y, patch x)
+            result shape: (time_div, 2(polarity), 2(hist), patch y, patch內pixel y, patch x, patch內pixel x)
+            result shape: (time_div, 2(polarity), 2(hist), image y, image x)
+            """
+            PH, PW = int((self.H + 1) / self.patch_size[0]), int((self.W + 1) / self.patch_size[1])
+            result = result.reshape(self.time_div, 2, 2, self.patch_size[0], self.patch_size[1], PH, PW)
+            result = result.transpose(0, 1, 2, 5, 3, 6, 4)
+            result = result.reshape(self.time_div, 2, 2, self.H, self.W)
 
-        for index, frame in enumerate(frame_list):
-            cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
-            # cv2.imshow("frame", frame)
-            # cv2.waitKey(0)
+            result_polarity_positive_hist0 = result[:, 0, 0, :, :]  # shape = (time_div, y, x)
+            result_polarity_positive_hist1 = result[:, 0, 1, :, :]  # shape = (time_div, y, x)
+            result_polarity_negative_hist0 = result[:, 1, 0, :, :]  # shape = (time_div, y, x)
+            result_polarity_negative_hist1 = result[:, 1, 1, :, :]  # shape = (time_div, y, x)
+
+            result_hist1_fusion = (result_polarity_positive_hist1 + result_polarity_negative_hist1) / 2
+
+            result_polarity_positive_hist0 = np.expand_dims(result_polarity_positive_hist0, axis=-1)
+            result_polarity_negative_hist0 = np.expand_dims(result_polarity_negative_hist0, axis=-1)
+            result_hist1_fusion = np.expand_dims(result_hist1_fusion, axis=-1)
+
+            result = np.concatenate(
+                (result_polarity_positive_hist0, result_polarity_negative_hist0, result_hist1_fusion),
+                axis=-1)
+
+            frame_list = []
+            for index, frame in enumerate(result):
+                frame = cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX)  # 確保數值範圍在 0-255
+                frame = frame.astype(np.uint8)
+
+                if self.output_npy_or_frame == 'ori_frame':
+                    frame_list.append(frame)
+                    continue
+
+                if self.output_npy_or_frame != 'enhancement_frame':
+                    raise NotImplementedError("Unsupported output format..")
+
+                frame[:, :, 0] = cv2.equalizeHist(frame[:, :, 0])
+                frame[:, :, 1] = cv2.equalizeHist(frame[:, :, 1])
+                frame[:, :, 2] = cv2.equalizeHist(frame[:, :, 2])
+                frame_list.append(frame)
+
+            if output_file_dir is not None:
+                os.makedirs(output_file_dir, exist_ok=True)
+                for index, frame in enumerate(frame_list):
+                    cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
+                    # cv2.imshow("frame", frame)
+                    # cv2.waitKey(0)
 
 
 if __name__ == '__main__':

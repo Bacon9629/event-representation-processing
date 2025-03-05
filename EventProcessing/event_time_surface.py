@@ -22,7 +22,7 @@ class EventTimeSurfaceConverter(BaseEventImageConverter):
         super().__init__(width=width, height=height, interval=interval)
         self.time_window = int(interval * 1_000_000)  # 微秒
 
-    def events_to_event_images(self, input_filepath: str, output_file_dir: str):
+    def events_to_event_images(self, input_filepath: str, output_file_dir: str = None):
         if not os.path.exists(input_filepath):
             raise FileNotFoundError("File not found: {}".format(input_filepath))
 
@@ -33,31 +33,35 @@ class EventTimeSurfaceConverter(BaseEventImageConverter):
         else:
             raise NotImplementedError("File type not supported.")
 
-        accumulator = dv_p.TimeSurface((self.width, self.height))
-        store = dv_p.EventStore()
-        result_frames = []
-
-        for event in events[0:]:
-            store.push_back(event['timestamp'], event['x'], event['y'], event['polarity'])
-            if store.getHighestTime() - store.getLowestTime() < self.time_window:
-                continue
-
-            accumulator.accept(store)
-            result_frames.append(copy(accumulator.generateFrame().image))
-            accumulator.reset()
+        from time_cost_record import CostRecord
+        for i in range(100):
+            accumulator = dv_p.TimeSurface((self.width, self.height))
             store = dv_p.EventStore()
+            result_frames = []
 
-            # # Show the accumulated image
-            # cv2.imshow("Preview", result_frames[-1])
-            # cv2.waitKey(0)
+            for event in events[0:]:
+                store.push_back(event['timestamp'], event['x'], event['y'], event['polarity'])
+                if store.getHighestTime() - store.getLowestTime() < self.time_window:
+                    continue
 
-        if store.size() > 0:
-            accumulator.accept(store)
-            result_frames.append(accumulator.generateFrame().image)
+                with CostRecord(self.__class__.__name__):
+                    accumulator.accept(store)
+                    result_frames.append(copy(accumulator.generateFrame().image))
+                accumulator.reset()
+                store = dv_p.EventStore()
 
-        os.makedirs(output_file_dir, exist_ok=True)
-        for index, image in enumerate(result_frames):
-            cv2.imwrite(os.path.join(output_file_dir, '{:08d}.png'.format(index)), image)
+                # # Show the accumulated image
+                # cv2.imshow("Preview", result_frames[-1])
+                # cv2.waitKey(0)
+
+            if store.size() > 0:
+                accumulator.accept(store)
+                result_frames.append(accumulator.generateFrame().image)
+
+        if output_file_dir is not None:
+            os.makedirs(output_file_dir, exist_ok=True)
+            for index, image in enumerate(result_frames):
+                cv2.imwrite(os.path.join(output_file_dir, '{:08d}.png'.format(index)), image)
 
 
 if __name__ == '__main__':
