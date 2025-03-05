@@ -39,24 +39,24 @@ class EventTimeSurfaceConverter(BaseEventImageConverter):
             store = dv_p.EventStore()
             result_frames = []
 
-            for event in events[0:]:
-                store.push_back(event['timestamp'], event['x'], event['y'], event['polarity'])
-                if store.getHighestTime() - store.getLowestTime() < self.time_window:
-                    continue
+            with CostRecord(self.__class__.__name__):
+                for event in events[0:]:
+                    store.push_back(event['timestamp'], event['x'], event['y'], event['polarity'])
+                    if store.getHighestTime() - store.getLowestTime() < self.time_window:
+                        continue
 
-                with CostRecord(self.__class__.__name__):
                     accumulator.accept(store)
                     result_frames.append(copy(accumulator.generateFrame().image))
-                accumulator.reset()
-                store = dv_p.EventStore()
+                    accumulator.reset()
+                    store = dv_p.EventStore()
 
-                # # Show the accumulated image
-                # cv2.imshow("Preview", result_frames[-1])
-                # cv2.waitKey(0)
+                    # # Show the accumulated image
+                    # cv2.imshow("Preview", result_frames[-1])
+                    # cv2.waitKey(0)
 
-            if store.size() > 0:
-                accumulator.accept(store)
-                result_frames.append(accumulator.generateFrame().image)
+                if store.size() > 0:
+                    accumulator.accept(store)
+                    result_frames.append(accumulator.generateFrame().image)
 
         if output_file_dir is not None:
             os.makedirs(output_file_dir, exist_ok=True)
