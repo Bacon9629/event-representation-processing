@@ -95,7 +95,7 @@ class BaseEventImageConverter(abc.ABC):
         Mapping asynchronous events into event images
         ex:
         ```
-            if input_filepath.endswith('.aedat4'):
+            if input_filepath.endswith('.aedat4') or input_filepath.endswith('.aedat'):
                 events = self.aedat_reader(input_filepath)
             elif input_filepath.endswith('.npy') or input_filepath.endswith('.npz'):
                 events = self.npy_reader(input_filepath)

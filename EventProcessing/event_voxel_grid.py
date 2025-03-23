@@ -196,7 +196,7 @@ class EventVoxelGridConverter(BaseEventImageConverter):
         if not os.path.exists(input_filepath):
             raise FileNotFoundError("File not found: {}".format(input_filepath))
 
-        if input_filepath.endswith('.aedat4'):
+        if input_filepath.endswith('.aedat4') or input_filepath.endswith('.aedat'):
             events = self.aedat_reader(input_filepath)
         elif input_filepath.endswith('.npy') or input_filepath.endswith('.npz'):
             events = self.npy_reader(input_filepath)
