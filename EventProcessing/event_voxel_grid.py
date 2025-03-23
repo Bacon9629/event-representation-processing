@@ -21,7 +21,7 @@ class EventVoxelGridConverter(BaseEventImageConverter):
         :param output_npy_or_frame: Choose what data format to output
         :param voxel_bin_num: Hyperparameter, The author sets it to 9 in the repo provided by the original paper
         """
-        super().__init__(width=width, height=height, interval=0)
+        super().__init__(width=width, height=height, interval=voxel_bin_num)
         self.output_npy_or_frame = output_npy_or_frame.lower().strip()
         self.H = height
         self.W = width
