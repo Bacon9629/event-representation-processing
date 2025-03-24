@@ -18,6 +18,10 @@ conda create -n event_representation python=3.10
 conda activate event_representation
 pip install -r requirements.txt
 ```
+or
+```shell
+pip install git+https://github.com/Bacon9629/event-representation-processing.git
+```
 
 #### 🔄 2. Convert Event Data
 
