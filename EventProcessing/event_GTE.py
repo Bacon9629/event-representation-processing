@@ -227,7 +227,7 @@ class EventGTEConverter(BaseEventImageConverter):
 
         from time_cost_record import CostRecord
         for i in range(100):
-            with CostRecord(self.__class__.__name__):
+            with CostRecord(f"{self.__class__.__name__}_{self.interval}"):
                 t = t[:, :] - t[0, 0]
                 events = torch.cat([t, x, y, p], dim=1) / 1.0
 
@@ -289,7 +289,8 @@ class EventGTEConverter(BaseEventImageConverter):
             if output_file_dir is not None:
                 os.makedirs(output_file_dir, exist_ok=True)
                 for index, frame in enumerate(frame_list):
-                    cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
+                    # cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
+                    pass
                     # cv2.imshow("frame", frame)
                     # cv2.waitKey(0)
 

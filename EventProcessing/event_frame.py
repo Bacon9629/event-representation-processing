@@ -66,7 +66,7 @@ class EventFrameConverter(BaseEventImageConverter):
 
         from time_cost_record import CostRecord
         for i in range(100):
-            with CostRecord(self.__class__.__name__):
+            with CostRecord(f"{self.__class__.__name__}_{self.interval}"):
                 # saving event images.
                 for i in range(int(aps_frames_NUM)):
                     start_index = np.searchsorted(events['timestamp'], int(start_timestamp) + i * interval * 1e6)
@@ -79,7 +79,8 @@ class EventFrameConverter(BaseEventImageConverter):
                     if output_file_dir is not None:
                         save_path = output_file_dir + '/{:08d}.png'.format(i)
                         os.makedirs(output_file_dir, exist_ok=True)
-                        cv2.imwrite(save_path, event_image)
+                        # cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
+                        pass
 
 
 if __name__ == '__main__':

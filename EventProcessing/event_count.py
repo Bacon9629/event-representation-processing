@@ -36,7 +36,7 @@ class EventCountConverter(BaseEventImageConverter):
         history = []
 
         from time_cost_record import CostRecord
-        record = CostRecord(self.__class__.__name__)
+        record = CostRecord(f"{self.__class__.__name__}_{self.interval}")
 
         for i in range(100):
             one_stream_cost = 0
@@ -75,9 +75,10 @@ class EventCountConverter(BaseEventImageConverter):
         if output_file_dir is not None:
             os.makedirs(output_file_dir, exist_ok=True)
             for index, image in enumerate(result_frames):
-                cv2.imwrite(os.path.join(output_file_dir, '{:08d}.png'.format(index)), image)
+                # cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
+                pass
 
-        print(f"{self.__class__.__name__} cost: {np.mean(history)}")
+        print(f"{self.__class__.__name__}_{self.interval} cost: {np.mean(history)}")
 
 
 if __name__ == '__main__':
