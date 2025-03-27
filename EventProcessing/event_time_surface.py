@@ -77,8 +77,6 @@ class EventTimeSurfaceConverter(BaseEventImageConverter):
                 # cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
                 pass
 
-        print(f"{self.__class__.__name__}_{self.interval} cost: {np.mean(history)}")
-
 
 if __name__ == '__main__':
     converter = EventTimeSurfaceConverter(interval=0.5)

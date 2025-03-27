@@ -113,61 +113,55 @@ if __name__ == '__main__':
     # process_dataset(converter=EventVoxelGridConverter(output_npy_or_frame="enhancement_frame", voxel_bin_num=9), file_extension='aedat4', num_workers=3)
     # process_dataset(converter=EventGTEConverter(output_npy_or_frame="enhancement_frame", patch_size=(4, 4), group_num=12), file_extension='aedat4', num_workers=3)
 
-    process_dataset(converter=EventFrameConverter(height=260, width=346, interval=0.75), file_extension='aedat4',
+    process_dataset(converter=EventFrameConverter(interval=0.75), file_extension='aedat4',
                     num_workers=0)
-    process_dataset(converter=EventFrameConverter(height=260, width=346, interval=0.5), file_extension='aedat4',
+    process_dataset(converter=EventFrameConverter(interval=0.5), file_extension='aedat4',
                     num_workers=0)
-    process_dataset(converter=EventFrameConverter(height=260, width=346, interval=0.25), file_extension='aedat4',
-                    num_workers=0)
-
-    process_dataset(converter=EventCountConverter(height=260, width=346, interval=0.75), file_extension='aedat4',
-                    num_workers=0)
-    process_dataset(converter=EventCountConverter(height=260, width=346, interval=0.5), file_extension='aedat4',
-                    num_workers=0)
-    process_dataset(converter=EventCountConverter(height=260, width=346, interval=0.25), file_extension='aedat4',
+    process_dataset(converter=EventFrameConverter(interval=0.25), file_extension='aedat4',
                     num_workers=0)
 
-    process_dataset(converter=EventTimeSurfaceConverter(height=260, width=346, interval=0.75), file_extension='aedat4',
+    process_dataset(converter=EventCountConverter(interval=0.75), file_extension='aedat4',
                     num_workers=0)
-    process_dataset(converter=EventTimeSurfaceConverter(height=260, width=346, interval=0.5), file_extension='aedat4',
+    process_dataset(converter=EventCountConverter(interval=0.5), file_extension='aedat4',
                     num_workers=0)
-    process_dataset(converter=EventTimeSurfaceConverter(height=260, width=346, interval=0.25), file_extension='aedat4',
+    process_dataset(converter=EventCountConverter(interval=0.25), file_extension='aedat4',
                     num_workers=0)
 
-    process_dataset(converter=EventSpeedInvariantTimeSurfaceConverter(height=260, width=346, interval=0.75),
+    process_dataset(converter=EventTimeSurfaceConverter(interval=0.75), file_extension='aedat4',
+                    num_workers=0)
+    process_dataset(converter=EventTimeSurfaceConverter(interval=0.5), file_extension='aedat4',
+                    num_workers=0)
+    process_dataset(converter=EventTimeSurfaceConverter(interval=0.25), file_extension='aedat4',
+                    num_workers=0)
+
+    process_dataset(converter=EventSpeedInvariantTimeSurfaceConverter(interval=0.75),
                     file_extension='aedat4',
                     num_workers=0)
-    process_dataset(converter=EventSpeedInvariantTimeSurfaceConverter(height=260, width=346, interval=0.5),
+    process_dataset(converter=EventSpeedInvariantTimeSurfaceConverter(interval=0.5),
                     file_extension='aedat4',
                     num_workers=0)
-    process_dataset(converter=EventSpeedInvariantTimeSurfaceConverter(height=260, width=346, interval=0.25),
+    process_dataset(converter=EventSpeedInvariantTimeSurfaceConverter(interval=0.25),
                     file_extension='aedat4',
                     num_workers=0)
 
-    # process_dataset(converter=EventAFEConverter(height=260, width=346, sample_event_threshold=40, sample_event_num_min=100000),
+    # process_dataset(converter=EventAFEConverter(sample_event_threshold=40, sample_event_num_min=100000),
     #                 file_extension='aedat4', num_workers=0)
 
-    process_dataset(converter=EventVoxelGridConverter(height=260, width=346, output_npy_or_frame="enhancement_frame",
-                                                      voxel_bin_num=9),
+    process_dataset(converter=EventVoxelGridConverter(output_npy_or_frame="enhancement_frame", voxel_bin_num=9),
                     file_extension='aedat4', num_workers=0)
-    process_dataset(converter=EventVoxelGridConverter(height=260, width=346, output_npy_or_frame="enhancement_frame",
-                                                      voxel_bin_num=8),
+    process_dataset(converter=EventVoxelGridConverter(output_npy_or_frame="enhancement_frame", voxel_bin_num=8),
                     file_extension='aedat4', num_workers=0)
-    process_dataset(converter=EventVoxelGridConverter(height=260, width=346, output_npy_or_frame="enhancement_frame",
-                                                      voxel_bin_num=16),
+    process_dataset(converter=EventVoxelGridConverter(output_npy_or_frame="enhancement_frame", voxel_bin_num=16),
                     file_extension='aedat4', num_workers=0)
 
     process_dataset(
-        converter=EventGTEConverter(height=260, width=346, output_npy_or_frame="enhancement_frame", patch_size=(4, 4),
-                                    group_num=12),
+        converter=EventGTEConverter(output_npy_or_frame="enhancement_frame", patch_size=(4, 4), group_num=12),
         file_extension='aedat4', num_workers=0)
     process_dataset(
-        converter=EventGTEConverter(height=260, width=346, output_npy_or_frame="enhancement_frame", patch_size=(4, 4),
-                                    group_num=16),
+        converter=EventGTEConverter(output_npy_or_frame="enhancement_frame", patch_size=(4, 4), group_num=16),
         file_extension='aedat4', num_workers=0)
     process_dataset(
-        converter=EventGTEConverter(height=260, width=346, output_npy_or_frame="enhancement_frame", patch_size=(4, 4),
-                                    group_num=32),
+        converter=EventGTEConverter(output_npy_or_frame="enhancement_frame", patch_size=(4, 4), group_num=32),
         file_extension='aedat4', num_workers=0)
 
     from time_cost_record import CostRecord
