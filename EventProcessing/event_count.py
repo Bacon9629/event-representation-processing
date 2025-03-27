@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 import dv_processing as dv_p
 import numpy as np
@@ -32,35 +33,51 @@ class EventCountConverter(BaseEventImageConverter):
         else:
             raise NotImplementedError("File type not supported.")
 
+        history = []
+
         from time_cost_record import CostRecord
+        record = CostRecord(self.__class__.__name__)
+
         for i in range(100):
+            one_stream_cost = 0
             accumulator = dv_p.Accumulator((self.width, self.height))
             store = dv_p.EventStore()
             result_frames = []
 
-            with CostRecord(self.__class__.__name__):
-                for event in events[0:]:
-                    store.push_back(event['timestamp'], event['x'], event['y'], event['polarity'])
-                    if store.getHighestTime() - store.getLowestTime() < self.time_window:
-                        continue
+            for event in events[0:]:
+                store.push_back(event['timestamp'], event['x'], event['y'], event['polarity'])
+                if store.getHighestTime() - store.getLowestTime() < self.time_window:
+                    continue
 
-                    accumulator.accept(store)
-                    result_frames.append(accumulator.generateFrame().image)
-                    accumulator.clear()
-                    store = dv_p.EventStore()
+                time_a = time.time()
+                accumulator.accept(store)
+                time_b = time.time()
+                one_stream_cost += (time_b - time_a)
 
-                    # # Show the accumulated image
-                    # cv2.imshow("Preview", result_frames[-1])
-                    # cv2.waitKey(0)
+                result_frames.append(accumulator.generateFrame().image)
+                accumulator.clear()
+                store = dv_p.EventStore()
 
-                if store.size() > 0:
-                    accumulator.accept(store)
-                    result_frames.append(accumulator.generateFrame().image)
+                # # Show the accumulated image
+                # cv2.imshow("Preview", result_frames[-1])
+                # cv2.waitKey(0)
+
+            if store.size() > 0:
+                time_a = time.time()
+                accumulator.accept(store)
+                time_b = time.time()
+                one_stream_cost += (time_b - time_a)
+                result_frames.append(accumulator.generateFrame().image)
+
+            history.append(one_stream_cost)
+            record.records_by_experiment[CostRecord.current_experiment][record.function_name].append(one_stream_cost)
 
         if output_file_dir is not None:
             os.makedirs(output_file_dir, exist_ok=True)
             for index, image in enumerate(result_frames):
                 cv2.imwrite(os.path.join(output_file_dir, '{:08d}.png'.format(index)), image)
+
+        print(f"{self.__class__.__name__} cost: {np.mean(history)}")
 
 
 if __name__ == '__main__':
