@@ -50,10 +50,10 @@ class EventCountConverter(BaseEventImageConverter):
 
             time_a = time.time()
             accumulator.accept(store)
+            result_frames.append(accumulator.generateFrame().image)
             time_b = time.time()
             one_stream_cost += (time_b - time_a)
 
-            result_frames.append(accumulator.generateFrame().image)
             accumulator.clear()
             store = dv_p.EventStore()
 
@@ -64,9 +64,9 @@ class EventCountConverter(BaseEventImageConverter):
         if store.size() > 0:
             time_a = time.time()
             accumulator.accept(store)
+            result_frames.append(accumulator.generateFrame().image)
             time_b = time.time()
             one_stream_cost += (time_b - time_a)
-            result_frames.append(accumulator.generateFrame().image)
 
         history.append(one_stream_cost)
         record.records_by_experiment[CostRecord.current_experiment][record.function_name].append(one_stream_cost)
