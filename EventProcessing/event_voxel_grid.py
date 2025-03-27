@@ -209,41 +209,41 @@ class EventVoxelGridConverter(BaseEventImageConverter):
         pol = torch.tensor(events['polarity'])
 
         from time_cost_record import CostRecord
-        for i in range(100):
-            with CostRecord(f"{self.__class__.__name__}_{self.interval}"):
-                voxel_grid = self.events_to_voxel(xs=x, ys=y, ts=ts, ps=pol, B=self.voxel_bin_num, sensor_size=(self.H, self.W), temporal_bilinear=True)
-                # print(voxel_grid.shape)  # (10, 240, 320)
+        with CostRecord(f"{self.__class__.__name__}_{self.interval}"):
+            voxel_grid = self.events_to_voxel(xs=x, ys=y, ts=ts, ps=pol, B=self.voxel_bin_num, sensor_size=(self.H, self.W), temporal_bilinear=True)
+            torch.cuda.synchronize()
+            # print(voxel_grid.shape)  # (10, 240, 320)
 
-                # save
-                if self.output_npy_or_frame == 'npy':
-                    if output_file_dir is not None:
-                        os.makedirs(output_file_dir, exist_ok=True)
-                        np.save(os.path.join(output_file_dir, 'voxel_grid.npy'), voxel_grid)
-                    return
-                elif "frame" not in self.output_npy_or_frame:
-                    raise NotImplementedError
+        # save
+        if self.output_npy_or_frame == 'npy':
+            if output_file_dir is not None:
+                os.makedirs(output_file_dir, exist_ok=True)
+                np.save(os.path.join(output_file_dir, 'voxel_grid.npy'), voxel_grid)
+            return
+        elif "frame" not in self.output_npy_or_frame:
+            raise NotImplementedError
 
-                frame_list = []
-                for index, frame in enumerate(voxel_grid):
-                    frame = cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX)
-                    frame = frame.astype(np.uint8)
+        frame_list = []
+        for index, frame in enumerate(voxel_grid):
+            frame = cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX)
+            frame = frame.astype(np.uint8)
 
-                    if self.output_npy_or_frame == 'ori_frame':
-                        frame_list.append(frame)
-                    elif self.output_npy_or_frame == 'enhancement_frame':
-                        frame_list.append(cv2.equalizeHist(frame))
-                    else:
-                        raise NotImplementedError
+            if self.output_npy_or_frame == 'ori_frame':
+                frame_list.append(frame)
+            elif self.output_npy_or_frame == 'enhancement_frame':
+                frame_list.append(cv2.equalizeHist(frame))
+            else:
+                raise NotImplementedError
 
 
-                if output_file_dir is not None:
-                    os.makedirs(output_file_dir, exist_ok=True)
-                    for index, frame in enumerate(frame_list):
-                        # cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
-                        pass
+        if output_file_dir is not None:
+            os.makedirs(output_file_dir, exist_ok=True)
+            for index, frame in enumerate(frame_list):
+                # cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
+                pass
 
-                    # cv2.imshow("Preview", frame)
-                    # cv2.waitKey(0)
+            # cv2.imshow("Preview", frame)
+            # cv2.waitKey(0)
 
 
 if __name__ == '__main__':

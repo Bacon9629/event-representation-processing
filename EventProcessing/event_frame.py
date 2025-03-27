@@ -65,22 +65,21 @@ class EventFrameConverter(BaseEventImageConverter):
         start_timestamp = events[0][0]
 
         from time_cost_record import CostRecord
-        for i in range(100):
-            with CostRecord(f"{self.__class__.__name__}_{self.interval}"):
-                # saving event images.
-                for i in range(int(aps_frames_NUM)):
-                    start_index = np.searchsorted(events['timestamp'], int(start_timestamp) + i * interval * 1e6)
-                    end_index = np.searchsorted(events['timestamp'], int(start_timestamp) + (i + 1) * interval * 1e6)
+        with CostRecord(f"{self.__class__.__name__}_{self.interval}"):
+            # saving event images.
+            for i in range(int(aps_frames_NUM)):
+                start_index = np.searchsorted(events['timestamp'], int(start_timestamp) + i * interval * 1e6)
+                end_index = np.searchsorted(events['timestamp'], int(start_timestamp) + (i + 1) * interval * 1e6)
 
-                    rec_events = events[start_index:end_index]
+                rec_events = events[start_index:end_index]
 
-                    event_image = self._make_color_histo(rec_events)
+                event_image = self._make_color_histo(rec_events)
 
-                    if output_file_dir is not None:
-                        save_path = output_file_dir + '/{:08d}.png'.format(i)
-                        os.makedirs(output_file_dir, exist_ok=True)
-                        # cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
-                        pass
+                if output_file_dir is not None:
+                    save_path = output_file_dir + '/{:08d}.png'.format(i)
+                    os.makedirs(output_file_dir, exist_ok=True)
+                    # cv2.imwrite(os.path.join(output_file_dir, "{:08d}.png".format(index)), frame)
+                    pass
 
 
 if __name__ == '__main__':

@@ -165,16 +165,15 @@ class EventAFEConverter(BaseEventImageConverter):
             raise NotImplementedError("File type not supported.")
 
         from time_cost_record import CostRecord
-        for i in range(100):
-            with CostRecord(f"{self.__class__.__name__}_{self.interval}"):
-                ts = events['timestamp'].tolist()
-                x = events['x'].tolist()
-                y = events['y'].tolist()
-                pol = events['polarity'].tolist()
-                events_stream = np.array([x, y, ts, pol]).transpose()
+        with CostRecord(f"{self.__class__.__name__}_{self.interval}"):
+            ts = events['timestamp'].tolist()
+            x = events['x'].tolist()
+            y = events['y'].tolist()
+            pol = events['polarity'].tolist()
+            events_stream = np.array([x, y, ts, pol]).transpose()
 
-                all_frame = self.adaptive_event_sampling(events_stream)
-                all_frame = np.array(all_frame)  # T,H,W,3
+            all_frame = self.adaptive_event_sampling(events_stream)
+            all_frame = np.array(all_frame)  # T,H,W,3
 
         if output_file_dir is not None:
             os.makedirs(output_file_dir, exist_ok=True)
