@@ -23,7 +23,7 @@ class EventGTEConverter(BaseEventImageConverter):
         :param patch_size: Hyperparameter, The author sets it in the repo provided by the original paper as (4, 4)
         :param group_num: Hyperparameter, The author sets it to 12 in the repo provided by the original paper
         """
-        super().__init__(width=width, height=height, interval=0)
+        super().__init__(width=width, height=height, interval=group_num)
         self.output_npy_or_frame = output_npy_or_frame.lower().strip()
         self.H = height
         self.W = width
