@@ -55,9 +55,6 @@ def process_dataset(converter: BaseEventImageConverter, file_extension, num_work
     """
     print(f"Using {converter.__class__.__name__} interval: {converter.interval}")
 
-    data_root = "/media/2TB_1/dataset/DailyDVS-200" if sys.platform == 'linux' else r"E:/dataset/DailyDvs-200"
-    out_root = "/media/2TB_1/Bacon/dataset/DailyDvs-200" if sys.platform == 'linux' else r"E:/dataset/DailyDvs-200"
-
     file_list = glob.glob(fr"{data_root}/DailyDvs-200/*/*.{file_extension}")
     file_dicts = load_file_descriptions(data_root)
 
@@ -95,6 +92,10 @@ def process_dataset(converter: BaseEventImageConverter, file_extension, num_work
 
 
 if __name__ == '__main__':
+    
+    data_root = "/media/2TB_1/dataset/DailyDVS-200" if sys.platform == 'linux' else r"E:/dataset/DailyDvs-200"
+    out_root = "/media/2TB_1/Bacon/dataset/DailyDvs-200" if sys.platform == 'linux' else r"E:/dataset/DailyDvs-200"
+    
     # converter = EventFrameConverter(interval=0.5)
     # converter = EventCountConverter(interval=0.5)
     # converter = EventTimeSurfaceConverter(interval=0.5)
